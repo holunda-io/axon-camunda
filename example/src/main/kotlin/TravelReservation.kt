@@ -1,8 +1,8 @@
-package de.holisticon.axon.camunda.example
+package io.holunda.axon.camunda.example
 
-import de.holisticon.axon.camunda.example.hotel.BookHotel
-import de.holisticon.axon.camunda.example.hotel.CreateHotel
-import de.holisticon.axon.camunda.example.hotel.HotelBooked
+import io.holunda.axon.camunda.example.hotel.BookHotel
+import io.holunda.axon.camunda.example.hotel.CreateHotel
+import io.holunda.axon.camunda.example.hotel.HotelBooked
 import org.axonframework.commandhandling.gateway.CommandGateway
 import org.axonframework.messaging.MetaData
 import org.camunda.bpm.engine.RuntimeService

@@ -1,4 +1,4 @@
-package de.holisticon.axon.camunda.example
+package io.holunda.axon.camunda.example
 
 import org.camunda.bpm.spring.boot.starter.annotation.EnableProcessApplication
 import org.springframework.boot.SpringApplication

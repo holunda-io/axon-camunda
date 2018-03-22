@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>de.holisticon.axon</groupId>
+        <groupId>io.holunda.axon</groupId>
         <artifactId>axon-camunda-root</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
@@ -32,7 +32,7 @@
       <artifactId>camunda-engine-plugin-spin</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.camunda.bpm</groupId>
+      <groupId>org.camunda.spin</groupId>
       <artifactId>camunda-spin-dataformat-all</artifactId>
     </dependency>
 

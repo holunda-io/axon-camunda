@@ -1,4 +1,4 @@
-package de.holisticon.axon.camunda.example
+package io.holunda.axon.camunda.example
 
 import mu.KLogging
 import org.axonframework.commandhandling.gateway.CommandGateway

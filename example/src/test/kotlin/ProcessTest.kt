@@ -1,4 +1,4 @@
-package de.holisticon.axon.camunda.example
+package io.holunda.axon.camunda.example
 
 import org.camunda.bpm.engine.test.Deployment
 import org.camunda.bpm.engine.test.ProcessEngineRule

@@ -1,6 +1,6 @@
-package de.holisticon.axon.camunda.example.hotel
+package io.holunda.axon.camunda.example.hotel
 
-import de.holisticon.axon.camunda.example.interval
+import io.holunda.axon.camunda.example.interval
 import mu.KLogging
 import org.axonframework.commandhandling.CommandHandler
 import org.axonframework.commandhandling.TargetAggregateIdentifier

@@ -1,4 +1,4 @@
-package de.holisticon.axon.camunda.example.hotel
+package io.holunda.axon.camunda.example.hotel
 
 import org.axonframework.test.aggregate.AggregateTestFixture
 import org.junit.Test
