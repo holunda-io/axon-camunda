@@ -4,7 +4,6 @@ This library demonstrates usage of Camunda BPM engine for Saga-like execution of
 
 ## Features ToDo
 
-- Refactoring camunda component code
 - Write lib tests
 - Finish example (add airline, add car booking), add compensation
 - Write more docs

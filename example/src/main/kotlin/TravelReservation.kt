@@ -41,11 +41,7 @@ object TravelProcess {
 }
 
 @Configuration
-class TravelReservationConfiguration {
-
-
-  @Autowired
-  lateinit var gateway: CommandGateway
+class TravelReservationConfiguration(private val gateway: CommandGateway) {
 
   @Bean
   fun init() = object : DefaultSmartLifecycle(1000) {
@@ -85,12 +81,8 @@ class TravelReservationConfiguration {
   }
 }
 
-@Component
 @RestController
-class ProcessStarter {
-
-  @Autowired
-  lateinit var runtime: RuntimeService
+class ProcessStarter(private val runtime: RuntimeService) {
 
   @PostMapping("/travel")
   fun startTravel(): ResponseEntity<String> {
