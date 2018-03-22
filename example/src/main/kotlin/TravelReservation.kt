@@ -1,5 +1,9 @@
 package io.holunda.axon.camunda.example
 
+import io.holunda.axon.camunda.AbstractEventCommandFactory
+import io.holunda.axon.camunda.CamundaAxonEventCommandFactoryRegistry
+import io.holunda.axon.camunda.CamundaSignalEvent
+import io.holunda.axon.camunda.DefaultSmartLifecycle
 import io.holunda.axon.camunda.example.hotel.BookHotel
 import io.holunda.axon.camunda.example.hotel.CreateHotel
 import io.holunda.axon.camunda.example.hotel.HotelBooked

@@ -67,6 +67,11 @@
         <artifactId>camunda-spin-dataformat-all</artifactId>
         <version>1.5.0</version>
       </dependency>
+      <dependency>
+        <groupId>io.holunda.axon</groupId>
+        <artifactId>axon-camunda</artifactId>
+        <version>${project.version}</version>
+      </dependency>
 
     </dependencies>
   </dependencyManagement>

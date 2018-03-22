@@ -1,4 +1,4 @@
-package io.holunda.axon.camunda.example
+package io.holunda.axon.camunda
 
 import mu.KLogging
 import org.axonframework.commandhandling.gateway.CommandGateway
@@ -13,6 +13,7 @@ import org.camunda.bpm.model.bpmn.instance.MessageEventDefinition
 import org.camunda.bpm.model.bpmn.instance.ThrowEvent
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.SmartLifecycle
+import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Component
 
@@ -59,6 +60,7 @@ class CommandSender: JavaDelegate {
 }
 
 @Configuration
+@ComponentScan
 class CamundaAxonConfiguration {
 
   @Autowired
@@ -96,9 +98,6 @@ class CamundaEventHandler : EventListener {
     }
   }
 }
-
-
-
 
 /**
  * Factory providing Axon commands for given BPMN throwing message event name and a delegate execution.
