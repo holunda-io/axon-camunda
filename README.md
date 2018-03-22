@@ -13,3 +13,4 @@ This library demonstrates usage of Camunda BPM engine for Saga-like execution of
 ## Bugs
 
 - Maven Run doesn't deploy processes
+- Signal wird gefeuert, aber der Prozess reagiert noch nicht
