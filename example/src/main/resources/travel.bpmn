@@ -13,7 +13,7 @@
       <bpmn:incoming>SequenceFlow_0ulebh0</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="SequenceFlow_0ulebh0" sourceRef="service_log_booking" targetRef="end" />
-    <bpmn:sequenceFlow id="SequenceFlow_02ub3d5" sourceRef="command_book_hotel" targetRef="IntermediateThrowEvent_0w0iclr" />
+    <bpmn:sequenceFlow id="SequenceFlow_02ub3d5" sourceRef="command_book_hotel" targetRef="catch_hotel_booked" />
     <bpmn:intermediateThrowEvent id="command_book_hotel" name="Book Hotel">
       <bpmn:incoming>SequenceFlow_0ex6gkm</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_02ub3d5</bpmn:outgoing>
@@ -24,8 +24,8 @@
       <bpmn:incoming>SequenceFlow_1oxlvtv</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0ex6gkm</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="SequenceFlow_06cpspz" sourceRef="IntermediateThrowEvent_0w0iclr" targetRef="service_log_booking" />
-    <bpmn:intermediateCatchEvent id="IntermediateThrowEvent_0w0iclr" name="Hotel Booked&#10;&#10;">
+    <bpmn:sequenceFlow id="SequenceFlow_06cpspz" sourceRef="catch_hotel_booked" targetRef="service_log_booking" />
+    <bpmn:intermediateCatchEvent id="catch_hotel_booked" name="Hotel Booked&#10;&#10;">
       <bpmn:incoming>SequenceFlow_02ub3d5</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_06cpspz</bpmn:outgoing>
       <bpmn:signalEventDefinition signalRef="Signal_0oesob8" />
@@ -36,68 +36,68 @@
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="travel">
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="start">
-        <dc:Bounds x="-83" y="200" width="36" height="36" />
+        <dc:Bounds x="184" y="245" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="-110" y="236" width="90" height="20" />
+          <dc:Bounds x="157" y="281" width="90" height="20" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1oxlvtv_di" bpmnElement="SequenceFlow_1oxlvtv">
-        <di:waypoint xsi:type="dc:Point" x="-47" y="218" />
-        <di:waypoint xsi:type="dc:Point" x="29" y="218" />
+        <di:waypoint xsi:type="dc:Point" x="220" y="263" />
+        <di:waypoint xsi:type="dc:Point" x="296" y="263" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="-54" y="197" width="90" height="12" />
+          <dc:Bounds x="213" y="242" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ServiceTask_1dipneh_di" bpmnElement="service_log_booking">
-        <dc:Bounds x="445" y="178" width="100" height="80" />
+        <dc:Bounds x="693" y="223" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_1jk35hc_di" bpmnElement="end">
-        <dc:Bounds x="611" y="200" width="36" height="36" />
+        <dc:Bounds x="868" y="245" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="584" y="240" width="90" height="12" />
+          <dc:Bounds x="841" y="285" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0ulebh0_di" bpmnElement="SequenceFlow_0ulebh0">
-        <di:waypoint xsi:type="dc:Point" x="545" y="218" />
-        <di:waypoint xsi:type="dc:Point" x="611" y="218" />
+        <di:waypoint xsi:type="dc:Point" x="793" y="263" />
+        <di:waypoint xsi:type="dc:Point" x="868" y="263" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="533" y="197" width="90" height="12" />
+          <dc:Bounds x="785.5" y="242" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_02ub3d5_di" bpmnElement="SequenceFlow_02ub3d5">
-        <di:waypoint xsi:type="dc:Point" x="230" y="218" />
-        <di:waypoint xsi:type="dc:Point" x="314" y="218" />
+        <di:waypoint xsi:type="dc:Point" x="497" y="263" />
+        <di:waypoint xsi:type="dc:Point" x="581" y="263" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="227" y="197" width="90" height="12" />
+          <dc:Bounds x="494" y="242" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="IntermediateThrowEvent_032it2j_di" bpmnElement="command_book_hotel">
-        <dc:Bounds x="194" y="200" width="36" height="36" />
+        <dc:Bounds x="461" y="245" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="187" y="240" width="53" height="12" />
+          <dc:Bounds x="454" y="285" width="53" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0ex6gkm_di" bpmnElement="SequenceFlow_0ex6gkm">
-        <di:waypoint xsi:type="dc:Point" x="129" y="218" />
-        <di:waypoint xsi:type="dc:Point" x="194" y="218" />
+        <di:waypoint xsi:type="dc:Point" x="396" y="263" />
+        <di:waypoint xsi:type="dc:Point" x="461" y="263" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="161.5" y="197" width="0" height="12" />
+          <dc:Bounds x="384" y="242" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ServiceTask_0ou2bf7_di" bpmnElement="service_prepare_booking">
-        <dc:Bounds x="29" y="178" width="100" height="80" />
+        <dc:Bounds x="296" y="223" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_06cpspz_di" bpmnElement="SequenceFlow_06cpspz">
-        <di:waypoint xsi:type="dc:Point" x="350" y="218" />
-        <di:waypoint xsi:type="dc:Point" x="445" y="218" />
+        <di:waypoint xsi:type="dc:Point" x="617" y="263" />
+        <di:waypoint xsi:type="dc:Point" x="693" y="263" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="397.5" y="197" width="0" height="12" />
+          <dc:Bounds x="610" y="242" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="IntermediateCatchEvent_02d7hqx_di" bpmnElement="IntermediateThrowEvent_0w0iclr">
-        <dc:Bounds x="314" y="200" width="36" height="36" />
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_02d7hqx_di" bpmnElement="catch_hotel_booked">
+        <dc:Bounds x="581" y="245" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="300" y="240" width="65" height="36" />
+          <dc:Bounds x="567" y="285" width="65" height="36" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>

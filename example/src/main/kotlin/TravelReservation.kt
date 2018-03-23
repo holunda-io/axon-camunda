@@ -7,6 +7,7 @@ import io.holunda.axon.camunda.DefaultSmartLifecycle
 import io.holunda.axon.camunda.example.hotel.BookHotel
 import io.holunda.axon.camunda.example.hotel.CreateHotel
 import io.holunda.axon.camunda.example.hotel.HotelBooked
+import mu.KLogging
 import org.axonframework.commandhandling.gateway.CommandGateway
 import org.axonframework.messaging.MetaData
 import org.camunda.bpm.engine.RuntimeService
@@ -33,10 +34,15 @@ object TravelProcess {
 
   object Variables {
     const val RESERVATION = "reservation"
+    const val HOTEL_RESERVATION_ID = "hotelReservationId"
   }
 
   object Messages {
     const val BOOK_HOTEL = "bookHotel"
+  }
+
+  object Signals {
+      const val HOTEL_BOOKED = "hotelBooked"
   }
 }
 
@@ -50,10 +56,13 @@ class TravelReservationConfiguration(private val gateway: CommandGateway) {
     }
   }
 
+  companion object: KLogging()
+
   @Autowired
   fun configure(registry: CamundaAxonEventCommandFactoryRegistry) {
 
     registry.register(object: AbstractEventCommandFactory(TravelProcess.KEY) {
+
 
       /**
        * Commands
@@ -73,7 +82,10 @@ class TravelReservationConfiguration(private val gateway: CommandGateway) {
        */
       override fun event(payload: Any, metadata: MetaData): CamundaSignalEvent? =
         when (payload) {
-          is HotelBooked -> CamundaSignalEvent("hotelBooked", mapOf<String, Any>("guestName" to ""))
+          is HotelBooked -> {
+            // return hotel reservation id into the process payload
+            CamundaSignalEvent(TravelProcess.Signals.HOTEL_BOOKED, mapOf<String, Any>(TravelProcess.Variables.HOTEL_RESERVATION_ID to payload.reservationId))
+          }
           else -> null
         }
 
