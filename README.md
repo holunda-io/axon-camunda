@@ -1,5 +1,8 @@
 # Axon Camunda
 
+[![Build Status](https://travis-ci.org/holunda-io/axon-camunda.svg?branch=master)](https://travis-ci.org/holunda-io/axon-camunda)
+
+
 This library demonstrates usage of Camunda BPM engine for Saga-like execution of orchestration between different Axon aggregates.
 
 ## Features ToDo
