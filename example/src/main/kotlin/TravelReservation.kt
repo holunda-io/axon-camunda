@@ -4,6 +4,7 @@ import io.holunda.axon.camunda.AbstractEventCommandFactory
 import io.holunda.axon.camunda.CamundaAxonEventCommandFactoryRegistry
 import io.holunda.axon.camunda.CamundaSignalEvent
 import io.holunda.axon.camunda.DefaultSmartLifecycle
+import io.holunda.axon.camunda.example.flight.CreateFlight
 import io.holunda.axon.camunda.example.hotel.BookHotel
 import io.holunda.axon.camunda.example.hotel.CreateHotel
 import io.holunda.axon.camunda.example.hotel.HotelBooked
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController
 import org.threeten.extra.Interval
 import java.io.Serializable
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.ZoneOffset
 
 /**
@@ -52,7 +54,12 @@ class TravelReservationConfiguration(private val gateway: CommandGateway) {
   @Bean
   fun init() = object : DefaultSmartLifecycle(1000) {
     override fun onStart() {
-      gateway.send<Any>(CreateHotel("astoria"))
+
+      val now = LocalDateTime.now();
+
+      gateway.send<Any>(CreateHotel("astoria", "Hamburg"))
+      gateway.send<Any>(CreateFlight("LH-123", now, now.plusHours(2), "HAM", "MUC", 10))
+      gateway.send<Any>(CreateFlight("LH-124", now.plusHours(8), now.plusHours(10), "HAM", "MUC", 10))
     }
   }
 

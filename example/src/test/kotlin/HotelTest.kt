@@ -15,7 +15,7 @@ class HotelAggregateTest {
     val departure = arrival.plusDays(3)
 
     fix
-      .given(HotelCreated("astoria"))
+      .given(HotelCreated("astoria", "Hamburg"))
       .`when`(BookHotel(
         arrival = arrival,
         departure = departure,
@@ -42,7 +42,7 @@ class HotelAggregateTest {
 
     fix
       .given(
-        HotelCreated("astoria"),
+        HotelCreated("astoria", "Hamburg"),
         HotelBooked(
         arrival = arrival,
         departure = departure,

@@ -15,7 +15,8 @@ import java.util.*
 
 data class CreateHotel(
   @TargetAggregateIdentifier
-  val hotelName: String
+  val hotelName: String,
+  val city: String
 )
 
 
@@ -29,7 +30,8 @@ data class BookHotel(
 )
 
 data class HotelCreated(
-  val hotelName: String
+  val hotelName: String,
+  val city: String
 )
 
 
@@ -54,7 +56,7 @@ class HotelBooking() {
 
   @CommandHandler
   constructor(c: CreateHotel) : this() {
-    apply(HotelCreated(c.hotelName))
+    apply(HotelCreated(c.hotelName, c.city))
   }
 
   @CommandHandler
@@ -74,12 +76,10 @@ class HotelBooking() {
   @EventSourcingHandler
   fun on(e: HotelCreated) {
     this.hotelName = e.hotelName
-    logger.info { "Created hotel $hotelName" }
   }
 
   @EventSourcingHandler
   fun on(e: HotelBooked) {
     reserved.add(interval(e.arrival, e.departure))
-    logger.info { "Booked hotel $hotelName for ${e.guestName}" }
   }
 }

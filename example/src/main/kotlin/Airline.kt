@@ -10,10 +10,11 @@ import org.axonframework.spring.stereotype.Aggregate
 import java.time.LocalDateTime
 
 typealias Airport = String
+typealias FlightNumber = String
 
 data class CreateFlight(
   @TargetAggregateIdentifier
-  val flightNumber: String,
+  val flightNumber: FlightNumber,
   val arrival: LocalDateTime,
   val departure: LocalDateTime,
   val from: Airport,
@@ -23,12 +24,12 @@ data class CreateFlight(
 
 data class BookFlight(
   @TargetAggregateIdentifier
-  val flightNumber: String,
+  val flightNumber: FlightNumber,
   val guestName: String
 )
 
 data class FlightCreated(
-  val flightNumber: String,
+  val flightNumber: FlightNumber,
   val arrival: LocalDateTime,
   val departure: LocalDateTime,
   val from: Airport,
@@ -37,7 +38,7 @@ data class FlightCreated(
 )
 
 data class FlightBooked(
-  val flightNumber: String,
+  val flightNumber: FlightNumber,
   val guestName: String,
   val arrival: LocalDateTime,
   val departure: LocalDateTime,
@@ -52,12 +53,12 @@ class Flight() {
   companion object : KLogging()
 
   @AggregateIdentifier
-  private lateinit var flightNumber: String
+  private lateinit var flightNumber: FlightNumber
   private lateinit var arrivalTime: LocalDateTime
   private lateinit var departureTime: LocalDateTime
   private lateinit var arrivalAirport: Airport
   private lateinit var departureAirport: Airport
-  private lateinit var availableSeats: Integer
+  private var availableSeats: Int = 0
 
   @CommandHandler
   constructor(c: CreateFlight) : this() {
@@ -86,17 +87,16 @@ class Flight() {
     this.departureTime = e.departure
     this.arrivalAirport = e.from
     this.departureAirport = e.to
-    this.availableSeats = Integer(e.seats)
-    logger.info { "Created flight $flightNumber" }
+    this.availableSeats = e.seats
   }
 
   @EventSourcingHandler
   fun on(e: FlightBooked) {
     // decrease number of seats
-    this.availableSeats.toInt().dec()
+    this.availableSeats.dec()
   }
 }
 
-class NoSeatsAvailable(val flightNumber: String) : Exception("No seats in $flightNumber available.") {
+class NoSeatsAvailable(val flightNumber: FlightNumber) : Exception("No seats in $flightNumber available.") {
 
 }
