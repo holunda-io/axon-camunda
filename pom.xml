@@ -17,6 +17,7 @@
 
   <modules>
     <module>axon-camunda</module>
+    <module>axon-camunda-annotations</module>
     <module>example</module>
   </modules>
 
@@ -25,7 +26,7 @@
     <dockerfile.skip>true</dockerfile.skip>
 
     <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
-    <kotlin.version>1.2.30</kotlin.version>
+    <kotlin.version>1.2.60</kotlin.version>
 
     <kotlin-logging.version>1.4.6</kotlin-logging.version>
     <axon.version>3.2</axon.version>
@@ -44,6 +45,12 @@
         <version>${camunda.version}</version>
         <scope>import</scope>
         <type>pom</type>
+      </dependency>
+
+      <dependency>
+        <groupId>org.camunda.bpm.springboot</groupId>
+        <artifactId>camunda-bpm-spring-boot-starter-webapp</artifactId>
+        <version>${camunda-spring-boot.version}</version>
       </dependency>
       <dependency>
         <groupId>org.camunda.bpm.springboot</groupId>

@@ -10,6 +10,7 @@ import org.axonframework.eventhandling.EventHandler
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.engine.delegate.JavaDelegate
 import org.springframework.stereotype.Component
+import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 
 @Component
@@ -27,7 +28,7 @@ class LoggingService : JavaDelegate {
 /**
  * Service for searching for flights.
  */
-@Component
+@Service
 @ProcessingGroup("Airline")
 class AirlineInformationService {
 
@@ -51,7 +52,7 @@ class AirlineInformationService {
       arrivalDate = e.arrival
     ))
     flights[Pair(e.from, e.to)] = destinationFlights
-    logger.info { "Flight added ${e.flightNumber}" }
+    logger.info { "Flight added ${e.flightNumber} from ${e.arrival} to ${e.departure}" }
   }
 
   data class FlightInfo(

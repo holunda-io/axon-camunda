@@ -1,5 +1,3 @@
-package io.holunda.axon.camunda
-
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.model.bpmn.instance.MessageEventDefinition
 import org.camunda.bpm.model.bpmn.instance.ThrowEvent

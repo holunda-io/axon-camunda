@@ -1,47 +1,40 @@
 package io.holunda.axon.camunda
 
 import mu.KLogging
+import org.axonframework.commandhandling.AsynchronousCommandBus
+import org.axonframework.common.transaction.TransactionManager
 import org.axonframework.config.EventHandlingConfiguration
 import org.axonframework.eventhandling.EventListener
 import org.axonframework.eventhandling.EventMessage
+import org.axonframework.monitoring.NoOpMessageMonitor
 import org.camunda.bpm.engine.RuntimeService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.EnableTransactionManagement
+import java.util.concurrent.Executors
 
 @Configuration
 @ComponentScan
-class AxonConfiguration(private val camundaEventHandler: CamundaEventHandler) {
+@EnableTransactionManagement
+class AxonConfiguration {
 
   @Autowired
-  fun configure(eventHandlingConfiguration: EventHandlingConfiguration) {
+  fun configure(eventHandlingConfiguration: EventHandlingConfiguration, camundaEventHandler: CamundaEventHandler) {
     eventHandlingConfiguration.registerEventHandler { _ -> camundaEventHandler }
   }
+
+  @Bean
+  fun commandBus(txManager: TransactionManager) = AsynchronousCommandBus(Executors.newCachedThreadPool(), txManager, NoOpMessageMonitor.INSTANCE)
+
 }
 
-@Component
-class CamundaEventHandler(private val runtime: RuntimeService, private val registry: CamundaAxonEventCommandFactoryRegistry) : EventListener {
-
-  companion object: KLogging()
-
-  override fun handle(event: EventMessage<*>) {
-    logger.info { "Handling event $event" }
-
-    // iterate over all factories and map to signal event
-    // fire every successful mapping as a BPMN signal
-    registry.factories().map { it.event(event.payload, event.metaData) }.forEach { signalEvent ->
-      signalEvent?.let {
-        runtime.createSignalEvent(signalEvent.name).setVariables(signalEvent.variables.toMap()).send()
-        logger.info { "Signaled event" }
-      }
-    }
-  }
-}
 
 /**
- * Enables support for Axon Camunda event/command distribution.
+ * Enables support for Axon Camunda signal/command distribution.
  */
 @MustBeDocumented
 @Target(AnnotationTarget.CLASS)

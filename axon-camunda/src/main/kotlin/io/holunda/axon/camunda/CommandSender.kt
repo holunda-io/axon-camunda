@@ -9,7 +9,9 @@ import org.springframework.stereotype.Component
  * Delegate to send command to Axon.
  */
 @Component
-class CommandSender(private val registry: CamundaAxonEventCommandFactoryRegistry, private val gateway: CommandGateway): JavaDelegate {
+class CommandSender(
+  private val registry: CamundaAxonEventCommandFactoryRegistry, private val gateway: CommandGateway
+): JavaDelegate {
 
   override fun execute(execution: DelegateExecution) {
     gateway.send<Any>(registry.commandFactory(execution.processDefinitionKey()).command(execution.messageName(), execution))

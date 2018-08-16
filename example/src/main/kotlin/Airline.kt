@@ -1,5 +1,6 @@
 package io.holunda.axon.camunda.example.flight
 
+import io.holunda.axon.camunda.EventCorrelationId
 import mu.KLogging
 import org.axonframework.commandhandling.CommandHandler
 import org.axonframework.commandhandling.TargetAggregateIdentifier
@@ -39,6 +40,7 @@ data class FlightCreated(
 
 data class FlightBooked(
   val flightNumber: FlightNumber,
+  @EventCorrelationId
   val guestName: String,
   val arrival: LocalDateTime,
   val departure: LocalDateTime,

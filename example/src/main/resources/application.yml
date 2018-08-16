@@ -3,3 +3,13 @@ server:
 camunda:
   bpm:
     default-serialization-format: application/json
+    admin-user:
+      id: admin
+      password: admin
+      email: admin@admin.org
+      first-name: Admin
+      last-name: Administratos
+spring:
+  jackson:
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: false

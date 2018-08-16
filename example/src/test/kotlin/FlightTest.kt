@@ -40,7 +40,7 @@ class AirlineAggregateTest {
     fix
       .given(FlightCreated(flightNumber = flightNumber, arrival = arrivalDate, departure = departureDate, from = departureAirport, to = arrivalAirport, seats = seatCount))
       .`when`(BookFlight(flightNumber = flightNumber, guestName = "kermit"))
-      .expectEvents(FlightBooked(flightNumber = flightNumber, guestName = "kermit", arrival = arrivalDate, departure = departureDate, ticketNumber = "LH-123:" + seatCount ))
+      .expectEvents(FlightBooked(flightNumber = flightNumber, guestName = "kermit", arrival = arrivalDate, departure = departureDate, ticketNumber = "LH-123:$seatCount"))
 
   }
 
