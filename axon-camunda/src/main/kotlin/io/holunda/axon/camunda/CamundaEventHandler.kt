@@ -25,10 +25,11 @@ class CamundaEventHandler(
           logger.info { "Throwing signal ${camundaEvent.name}" }
           runtime.signalEventReceived(camundaEvent.name, camundaEvent.variables.toMap())
 
-          // messages for subscribed
+          // messages for subscribed processes
           val correlationId = extractCorrelationId(event.payload) ?: return
+
           if (camundaEvent.correlationVariableName != null) {
-            logger.info { "Correlation id found $correlationId" }
+            logger.info { "Correlation id found $correlationId, correlating a message using it." }
             runtime.correlateMessage(camundaEvent.name, mutableMapOf<String, Any>(camundaEvent.correlationVariableName to correlationId), camundaEvent.variables.toMap())
           }
         }

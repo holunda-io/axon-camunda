@@ -1,4 +1,4 @@
-package io.holunda.axon.camunda.example.flight
+package io.holunda.axon.camunda.example.airline
 
 
 import org.axonframework.test.aggregate.AggregateTestFixture
@@ -6,6 +6,7 @@ import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
 import java.time.LocalDateTime
+import java.util.*
 
 class AirlineAggregateTest {
 
@@ -18,10 +19,9 @@ class AirlineAggregateTest {
   private val flightNumber = "LH-123"
 
 
-
   @Before
   fun init() {
-    fix = AggregateTestFixture(io.holunda.axon.camunda.example.flight.Flight::class.java)
+    fix = AggregateTestFixture(Flight::class.java)
   }
 
   @Test
@@ -40,7 +40,7 @@ class AirlineAggregateTest {
     fix
       .given(FlightCreated(flightNumber = flightNumber, arrival = arrivalDate, departure = departureDate, from = departureAirport, to = arrivalAirport, seats = seatCount))
       .`when`(BookFlight(flightNumber = flightNumber, guestName = "kermit"))
-      .expectEvents(FlightBooked(flightNumber = flightNumber, guestName = "kermit", arrival = arrivalDate, departure = departureDate, ticketNumber = "LH-123:$seatCount"))
+      .expectEvents(FlightBooked(flightNumber = flightNumber, guestName = "kermit", arrival = arrivalDate, departure = departureDate, ticketNumber = "LH-123:$seatCount", reservationId = UUID.randomUUID().toString()))
 
   }
 
@@ -52,7 +52,7 @@ class AirlineAggregateTest {
     fix
       .given(
         FlightCreated(flightNumber = flightNumber, arrival = arrivalDate, departure = departureDate, from = departureAirport, to = arrivalAirport, seats = 1),
-        FlightBooked(flightNumber = flightNumber, guestName = "piggy", arrival = arrivalDate, departure = departureDate, ticketNumber = "LH-123:1"))
+        FlightBooked(flightNumber = flightNumber, guestName = "piggy", arrival = arrivalDate, departure = departureDate, ticketNumber = "LH-123:1", reservationId = UUID.randomUUID().toString()))
       .`when`(BookFlight(flightNumber = flightNumber, guestName = "kermit"))
       .expectNoEvents()
       .expectException(NoSeatsAvailable::class.java)

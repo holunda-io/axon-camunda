@@ -3,47 +3,12 @@ package io.holunda.axon.camunda.example.hotel
 import io.holunda.axon.camunda.example.interval
 import mu.KLogging
 import org.axonframework.commandhandling.CommandHandler
-import org.axonframework.commandhandling.TargetAggregateIdentifier
 import org.axonframework.commandhandling.model.AggregateIdentifier
 import org.axonframework.commandhandling.model.AggregateLifecycle.apply
 import org.axonframework.eventsourcing.EventSourcingHandler
 import org.axonframework.spring.stereotype.Aggregate
 import org.threeten.extra.Interval
-import java.time.LocalDate
-import java.util.*
 
-
-data class CreateHotel(
-  @TargetAggregateIdentifier
-  val hotelName: String,
-  val city: String
-)
-
-
-data class BookHotel(
-  val arrival: LocalDate,
-  val departure: LocalDate,
-  val guestName: String,
-  @TargetAggregateIdentifier
-  val hotelName: String,
-  val reservationId: String = UUID.randomUUID().toString()
-)
-
-data class HotelCreated(
-  val hotelName: String,
-  val city: String
-)
-
-
-data class HotelBooked(
-  val arrival: LocalDate,
-  val departure: LocalDate,
-  val guestName: String,
-  val hotelName: String,
-  val reservationId: String
-)
-
-data class HotelReservationNotPossibleException(override val message: String) : Exception(message)
 
 @Aggregate
 class HotelBooking() {
@@ -52,7 +17,7 @@ class HotelBooking() {
 
   @AggregateIdentifier
   private lateinit var hotelName: String
-  private val reserved = mutableSetOf<Interval>()
+  private val reserved = mutableMapOf<String, Interval>()
 
   @CommandHandler
   constructor(c: CreateHotel) : this() {
@@ -61,7 +26,7 @@ class HotelBooking() {
 
   @CommandHandler
   fun handle(c: BookHotel) {
-    if (reserved.filter { it.overlaps(interval(c.arrival, c.departure)) }.count() != 0) {
+    if (reserved.values.filter { it.overlaps(interval(c.arrival, c.departure)) }.count() != 0) {
       throw HotelReservationNotPossibleException("No rooms free")
     }
     apply(HotelBooked(
@@ -69,6 +34,7 @@ class HotelBooking() {
       departure = c.departure,
       guestName = c.guestName,
       hotelName = c.hotelName,
+      hotelConfirmationCode = "${c.hotelName}_${c.guestName}_${c.reservationId}",
       reservationId = c.reservationId
     ))
   }
@@ -80,6 +46,6 @@ class HotelBooking() {
 
   @EventSourcingHandler
   fun on(e: HotelBooked) {
-    reserved.add(interval(e.arrival, e.departure))
+    reserved.put(e.hotelConfirmationCode, interval(e.arrival, e.departure))
   }
 }

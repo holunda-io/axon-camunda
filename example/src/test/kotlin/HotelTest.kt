@@ -29,7 +29,8 @@ class HotelAggregateTest {
           departure = departure,
           guestName = "kermit",
           hotelName = "astoria",
-          reservationId = "4711"
+          reservationId = "4711",
+          hotelConfirmationCode = "astoria_kermit_4711"
         )
       )
   }
@@ -48,7 +49,8 @@ class HotelAggregateTest {
         departure = departure,
         guestName = "kermit",
         hotelName = "astoria",
-        reservationId = "4711"
+        reservationId = "4711",
+        hotelConfirmationCode = "astoria_kermit_4711"
       ))
       .`when`(
         BookHotel(

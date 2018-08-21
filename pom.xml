@@ -28,12 +28,16 @@
     <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
     <kotlin.version>1.2.60</kotlin.version>
 
+    <springboot.version>2.0.1.RELEASE</springboot.version>
+
     <kotlin-logging.version>1.4.6</kotlin-logging.version>
     <axon.version>3.2</axon.version>
     <spring-validator.version>1.1.0</spring-validator.version>
 
-    <camunda.version>7.8.0</camunda.version>
-    <camunda-spring-boot.version>2.3.0</camunda-spring-boot.version>
+    <camunda.version>7.9.0</camunda.version>
+    <version.camunda.spin>1.5.1</version.camunda.spin>
+    <camunda-spring-boot.version>3.0.0</camunda-spring-boot.version>
+    <jackson.version>2.9.5</jackson.version>
   </properties>
 
   <dependencyManagement>
@@ -45,6 +49,11 @@
         <version>${camunda.version}</version>
         <scope>import</scope>
         <type>pom</type>
+      </dependency>
+      <dependency>
+        <groupId>org.codehaus.groovy</groupId>
+        <artifactId>groovy-all</artifactId>
+        <version>2.4.5</version>
       </dependency>
 
       <dependency>
@@ -64,16 +73,20 @@
         <version>${camunda-spring-boot.version}</version>
         <scope>test</scope>
       </dependency>
+
+      <!-- Jackson -->
       <dependency>
-        <groupId>org.codehaus.groovy</groupId>
-        <artifactId>groovy-all</artifactId>
-        <version>2.4.5</version>
+        <groupId>com.fasterxml.jackson.module</groupId>
+        <artifactId>jackson-module-kotlin</artifactId>
+        <version>${jackson.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.camunda.spin</groupId>
-        <artifactId>camunda-spin-dataformat-all</artifactId>
-        <version>1.5.0</version>
+        <groupId>com.fasterxml.jackson.datatype</groupId>
+        <artifactId>jackson-datatype-jsr310</artifactId>
+        <version>${jackson.version}</version>
       </dependency>
+
+      <!-- Project -->
       <dependency>
         <groupId>io.holunda.axon</groupId>
         <artifactId>axon-camunda</artifactId>
@@ -103,6 +116,10 @@
       <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-stdlib-jdk8</artifactId>
       <version>${kotlin.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.module</groupId>
+      <artifactId>jackson-module-kotlin</artifactId>
     </dependency>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>

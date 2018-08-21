@@ -1,14 +1,12 @@
-import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.camunda.bpm.model.bpmn.instance.MessageEventDefinition
-import org.camunda.bpm.model.bpmn.instance.ThrowEvent
-import org.springframework.context.SmartLifecycle
+package io.holunda.spring
 
+import org.springframework.context.SmartLifecycle
 
 /**
  * Opinionated best guess implementation of [SmartLifecycle], just override [onStart] and  [getPhase]
  * to get an auto-started, startable and stoppable lifecycle manager.
  */
-abstract class DefaultSmartLifecycle(val thePhase : Int) : SmartLifecycle {
+abstract class DefaultSmartLifecycle(val thePhase: Int) : SmartLifecycle {
 
   private var running: Boolean = false
 

@@ -14,6 +14,4 @@ fun main(args: Array<String>) {
 @EnableProcessApplication
 @EnableAxonCamunda
 @EnableTransactionManagement
-class TravelAgencyApplication {
-
-}
+class TravelAgencyApplication

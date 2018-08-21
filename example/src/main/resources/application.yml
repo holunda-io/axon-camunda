@@ -9,6 +9,7 @@ camunda:
       email: admin@admin.org
       first-name: Admin
       last-name: Administratos
+    history-level: activity
 spring:
   jackson:
     serialization:

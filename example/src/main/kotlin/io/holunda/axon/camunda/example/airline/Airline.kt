@@ -1,53 +1,12 @@
-package io.holunda.axon.camunda.example.flight
+package io.holunda.axon.camunda.example.airline
 
-import io.holunda.axon.camunda.EventCorrelationId
 import mu.KLogging
 import org.axonframework.commandhandling.CommandHandler
-import org.axonframework.commandhandling.TargetAggregateIdentifier
 import org.axonframework.commandhandling.model.AggregateIdentifier
 import org.axonframework.commandhandling.model.AggregateLifecycle.apply
 import org.axonframework.eventsourcing.EventSourcingHandler
 import org.axonframework.spring.stereotype.Aggregate
 import java.time.LocalDateTime
-
-typealias Airport = String
-typealias FlightNumber = String
-
-data class CreateFlight(
-  @TargetAggregateIdentifier
-  val flightNumber: FlightNumber,
-  val arrival: LocalDateTime,
-  val departure: LocalDateTime,
-  val from: Airport,
-  val to: Airport,
-  val seats: Int
-)
-
-data class BookFlight(
-  @TargetAggregateIdentifier
-  val flightNumber: FlightNumber,
-  val guestName: String
-)
-
-data class FlightCreated(
-  val flightNumber: FlightNumber,
-  val arrival: LocalDateTime,
-  val departure: LocalDateTime,
-  val from: Airport,
-  val to: Airport,
-  val seats: Int
-)
-
-data class FlightBooked(
-  val flightNumber: FlightNumber,
-  @EventCorrelationId
-  val guestName: String,
-  val arrival: LocalDateTime,
-  val departure: LocalDateTime,
-  val ticketNumber: String
-)
-
-data class FlightBookingNotPossibleException(override val message: String) : Exception(message)
 
 @Aggregate
 class Flight() {
@@ -75,7 +34,8 @@ class Flight() {
         guestName = c.guestName,
         departure = this.departureTime,
         arrival = this.arrivalTime,
-        ticketNumber = this.flightNumber + ":" + availableSeats)
+        ticketNumber = this.flightNumber + ":" + availableSeats,
+        reservationId = c.reservationId)
       )
     } else {
       throw NoSeatsAvailable(this.flightNumber)
@@ -97,8 +57,4 @@ class Flight() {
     // decrease number of seats
     this.availableSeats.dec()
   }
-}
-
-class NoSeatsAvailable(val flightNumber: FlightNumber) : Exception("No seats in $flightNumber available.") {
-
 }
