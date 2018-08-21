@@ -5,7 +5,7 @@ import org.camunda.bpm.model.bpmn.instance.MessageEventDefinition
 import org.camunda.bpm.model.bpmn.instance.ThrowEvent
 
 /**
- * Extension function for delegate execution to extract message name.
+ * Extension function for process execution to extract message name.
  */
 fun DelegateExecution.messageName(): String {
   // rebind to allow smart cast
@@ -20,7 +20,7 @@ fun DelegateExecution.messageName(): String {
 }
 
 /**
- * Extension function for delegate execution to extract process definition key.
+ * Extension function for process execution to extract process definition key.
  */
 fun DelegateExecution.processDefinitionKey(): String {
   return processDefinitionId.split(":")[0]

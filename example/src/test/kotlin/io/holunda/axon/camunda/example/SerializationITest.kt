@@ -1,7 +1,7 @@
-package io.holunda.axon.camunda.example.airline
+package io.holunda.axon.camunda.example
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.holunda.axon.camunda.example.Reservation
+import io.holunda.spring.io.holunda.axon.camunda.example.process.Reservation
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith

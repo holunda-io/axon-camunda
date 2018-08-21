@@ -9,10 +9,8 @@ import org.axonframework.eventhandling.EventMessage
 import org.axonframework.monitoring.NoOpMessageMonitor
 import org.camunda.bpm.engine.RuntimeService
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.ComponentScan
-import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.Import
+import org.springframework.boot.context.properties.EnableConfigurationProperties
+import org.springframework.context.annotation.*
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.EnableTransactionManagement
 import java.util.concurrent.Executors
@@ -20,6 +18,7 @@ import java.util.concurrent.Executors
 @Configuration
 @ComponentScan
 @EnableTransactionManagement
+@EnableConfigurationProperties(AxonCamundaProperties::class)
 class AxonConfiguration {
 
   @Autowired

@@ -1,11 +1,10 @@
 package io.holunda.axon.camunda.example
 
+import io.holunda.axon.camunda.example.process.MessageBasedTravelProcess
 import org.camunda.bpm.engine.test.Deployment
-import org.camunda.bpm.engine.test.ProcessEngineRule
 import org.camunda.bpm.spring.boot.starter.test.helper.StandaloneInMemoryTestConfiguration
 import org.junit.Rule
 import org.junit.Test
-import org.springframework.beans.factory.annotation.Autowired
 
 class ProcessTest {
 
@@ -13,7 +12,7 @@ class ProcessTest {
   val camunda = StandaloneInMemoryTestConfiguration().rule()
 
   @Test
-  @Deployment(resources = arrayOf(TravelProcess.BPMN))
+  @Deployment(resources = arrayOf(MessageBasedTravelProcess.BPMN))
   fun `should deploy`() {
     // no code
   }

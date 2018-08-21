@@ -9,7 +9,8 @@ import org.springframework.stereotype.Component
 @Component
 class CamundaEventHandler(
   private val runtime: RuntimeService,
-  private val registry: CamundaAxonEventCommandFactoryRegistry) : EventListener {
+  private val registry: CamundaAxonEventCommandFactoryRegistry,
+  private val axonCamundaProperties: AxonCamundaProperties) : EventListener {
 
   companion object : KLogging()
 
@@ -21,9 +22,11 @@ class CamundaEventHandler(
       .forEach { camundaEvent ->
         camundaEvent?.let {
 
-          // signals for all
-          logger.info { "Throwing signal ${camundaEvent.name}" }
-          runtime.signalEventReceived(camundaEvent.name, camundaEvent.variables.toMap())
+          if (axonCamundaProperties.sendSignals) {
+            // signals for all
+            logger.info { "Throwing signal ${camundaEvent.name}" }
+            runtime.signalEventReceived(camundaEvent.name, camundaEvent.variables.toMap())
+          }
 
           // messages for subscribed processes
           val correlationId = extractCorrelationId(event.payload) ?: return

@@ -1,8 +1,5 @@
-package io.holunda.axon.camunda.example
+package io.holunda.axon.camunda.example.process
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.holunda.axon.camunda.AbstractEventCommandFactory
 import io.holunda.axon.camunda.CamundaAxonEventCommandFactoryRegistry
 import io.holunda.axon.camunda.CamundaEvent
@@ -13,7 +10,7 @@ import io.holunda.axon.camunda.example.hotel.BookHotel
 import io.holunda.axon.camunda.example.hotel.CreateHotel
 import io.holunda.axon.camunda.example.hotel.HotelBooked
 import io.holunda.spring.DefaultSmartLifecycle
-import mu.KLogging
+import io.holunda.spring.io.holunda.axon.camunda.example.process.Reservation
 import org.axonframework.commandhandling.callbacks.LoggingCallback
 import org.axonframework.commandhandling.gateway.CommandGateway
 import org.axonframework.messaging.MetaData
@@ -21,14 +18,11 @@ import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 import java.time.LocalDateTime
 
 
 @Configuration
-class TravelReservationConfiguration(private val gateway: CommandGateway) {
-
-  companion object : KLogging()
+open class MessageBasedTravelProcessConfiguration(private val gateway: CommandGateway) {
 
   @Bean
   fun init() = object : DefaultSmartLifecycle(1000) {
@@ -36,36 +30,38 @@ class TravelReservationConfiguration(private val gateway: CommandGateway) {
 
       val now = LocalDateTime.now();
 
-      gateway.send<Any, Any>(CreateHotel("astoria", "Hamburg"), LoggingCallback.INSTANCE)
+      gateway.send<Any, Any>(CreateHotel("Astoria", "Hamburg"), LoggingCallback.INSTANCE)
       gateway.send<Any, Any>(CreateFlight("LH-123", now, now.plusHours(2), "HAM", "MUC", 10), LoggingCallback.INSTANCE)
       gateway.send<Any, Any>(CreateFlight("LH-124", now.plusHours(8), now.plusHours(10), "MUC", "HAM", 10), LoggingCallback.INSTANCE)
     }
   }
 
 
-  @Bean
-  fun objectFactory(): ObjectMapper {
-    return Jackson2ObjectMapperBuilder()
-      .modules(JavaTimeModule(), KotlinModule())
-      .build()
-  }
-
-
   @Autowired
   fun configure(registry: CamundaAxonEventCommandFactoryRegistry) {
 
-    registry.register(object : AbstractEventCommandFactory(TravelProcess.KEY) {
+    registry.register(object : AbstractEventCommandFactory(MessageBasedTravelProcess.KEY) {
 
       /**
        * Commands
        */
       override fun command(messageName: String, execution: DelegateExecution): Any {
-        val reservation = execution.getVariable(TravelProcess.Variables.RESERVATION) as Reservation
+        val reservation = execution.getVariable(MessageBasedTravelProcess.Variables.RESERVATION) as Reservation
 
         // create a mapper between payload variables and command objects based on the message name
         return when (messageName) {
-          TravelProcess.Messages.BOOK_HOTEL -> BookHotel(arrival = reservation.from, departure = reservation.to, guestName = reservation.name, hotelName = reservation.hotel, reservationId = reservation.id)
-          TravelProcess.Messages.BOOK_FLIGHT -> BookFlight(flightNumber = reservation.flightNumber, guestName = reservation.name, reservationId = reservation.id)
+          MessageBasedTravelProcess.Messages.BOOK_HOTEL ->
+            BookHotel(
+              arrival = reservation.from,
+              departure = reservation.to,
+              guestName = reservation.name,
+              hotelName = reservation.hotel,
+              reservationId = reservation.id)
+          MessageBasedTravelProcess.Messages.BOOK_FLIGHT ->
+            BookFlight(
+              flightNumber = reservation.flightNumber,
+              guestName = reservation.name,
+              reservationId = reservation.id)
           else -> super.command(messageName, execution)
         }
       }
@@ -75,13 +71,18 @@ class TravelReservationConfiguration(private val gateway: CommandGateway) {
        */
       override fun event(payload: Any, metadata: MetaData): CamundaEvent? =
         when (payload) {
-          is HotelBooked -> {
+          is HotelBooked ->
             // return hotel reservation id into the process payload
-            CamundaEvent(TravelProcess.Messages.HOTEL_BOOKED, mapOf<String, Any>(TravelProcess.Variables.HOTEL_CONFIRMATION_CODE to payload.hotelConfirmationCode), TravelProcess.Variables.RESERVATION_ID)
-          }
-          is FlightBooked -> {
-            CamundaEvent(TravelProcess.Messages.FLIGHT_BOOKED, mapOf<String, Any>(TravelProcess.Variables.TICKET_NUMBER to payload.ticketNumber), TravelProcess.Variables.RESERVATION_ID)
-          }
+            CamundaEvent(
+              name = MessageBasedTravelProcess.Messages.HOTEL_BOOKED,
+              variables = mapOf<String, Any>(MessageBasedTravelProcess.Variables.HOTEL_CONFIRMATION_CODE to payload.hotelConfirmationCode),
+              correlationVariableName = MessageBasedTravelProcess.Variables.RESERVATION_ID)
+
+          is FlightBooked ->
+            CamundaEvent(
+              name = MessageBasedTravelProcess.Messages.FLIGHT_BOOKED,
+              variables = mapOf<String, Any>(MessageBasedTravelProcess.Variables.TICKET_NUMBER to payload.ticketNumber),
+              correlationVariableName = MessageBasedTravelProcess.Variables.RESERVATION_ID)
           else -> null
         }
 

@@ -11,13 +11,25 @@ of orchestration between different Axon Aggregates.
 - Orchestration of Axon aggregates based on BPMN Messages and BPMN Signals
 - Modelling of Orchestration using BPMN 2.x
 - Implementation of mapping of the domain logic in Java / Kotlin
+- Support for Error mapping
 - Easy integration of the solution with other tools like Camunda Cockpit for operations and management
 
 ## Basic concept
 
 AxonFramework is a fast-emerging and very promissing framework for building self-contained systems in Java. In doing so, 
 it allows for an effective implementation of the CQRS ES architecture style and de-couples architectural design from 
-strategy of system distribution and deployment.  
+strategy of system distribution and deployment. 
+
+It promotes the implementation of domain logic using Aggregates which receive Commannds for changing state and 
+emit Events to indicate the changes. If a state change of several coordinated Aggregates should be reached
+a concept of Saga is used. Sagas are reacting on Events and can send out Commands to drive the state change of 
+several Aggregates.
+
+Sagas are usualy programmed in Java as described in AxonFramework documentation. This approach lacks 
+clear visual representation which is so crucial in complex business scenarios. 
+
+Our propose is to use BPMN 2.x fo implementation of Sagas in Axon. This library allows for easy implementation
+of BPMN based Sagas and uses Camunda BPM engine for execution of those.
 
 
 ## Usage
@@ -172,6 +184,7 @@ The corresponding `CamundaAxonEventFactory` looks like the following:
 - Write more lib tests
 - Write more docs
 - More ITests 
+- Further concept for error mapping, what is the pattern to catch them?
 
 ## Bugs
 
