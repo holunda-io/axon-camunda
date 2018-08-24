@@ -22,5 +22,5 @@ class CamundaAxonEventCommandFactoryRegistry {
     }
 
   fun factories() = factories.values
-
+  fun processDefinitions() = factories.keys
 }

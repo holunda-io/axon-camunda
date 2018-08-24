@@ -14,23 +14,37 @@ import org.springframework.stereotype.Component
 @Component
 class CommandSender(
   private val registry: CamundaAxonEventCommandFactoryRegistry, private val gateway: CommandGateway
-): JavaDelegate {
+) : JavaDelegate {
 
-  companion object: KLogging()
+  companion object : KLogging()
 
   override fun execute(execution: DelegateExecution) {
-    val factory = registry.commandFactory(execution.processDefinitionKey())
-    gateway.send<Any, Any?>(factory.command(execution.messageName(), execution),
-      object: CommandCallback<Any, Any?> {
-        override fun onSuccess(commandMessage: CommandMessage<out Any>, result: Any?) {
-          logger.debug { "Successfully sent command message $commandMessage" }
-        }
-
-        override fun onFailure(commandMessage: CommandMessage<out Any>, cause: Throwable) {
-          val error = factory.error(cause) ?: cause
-          logger.debug { "Error sending command $commandMessage. Throwing $error." }
-          throw error
-        }
-      })
+    sendCommand(gateway, execution, registry, execution.messageName())
   }
+}
+
+@Component
+class MessageCommandSender(
+  private val registry: CamundaAxonEventCommandFactoryRegistry, private val gateway: CommandGateway
+) {
+  fun send(messageName: String, execution: DelegateExecution) {
+    sendCommand(gateway, execution, registry, messageName)
+  }
+}
+
+
+fun sendCommand(gateway: CommandGateway, execution: DelegateExecution, registry: CamundaAxonEventCommandFactoryRegistry, messageName: String) {
+  val factory = registry.commandFactory(execution.processDefinitionKey())
+  gateway.send<Any, Any?>(factory.command(messageName, execution),
+    object : CommandCallback<Any, Any?> {
+      override fun onSuccess(commandMessage: CommandMessage<out Any>, result: Any?) {
+        CommandSender.logger.debug { "Successfully sent command message $commandMessage" }
+      }
+
+      override fun onFailure(commandMessage: CommandMessage<out Any>, cause: Throwable) {
+        val error = factory.error(cause) ?: cause
+        CommandSender.logger.error { "Error sending command $commandMessage. Throwing $error." }
+        throw error
+      }
+    })
 }

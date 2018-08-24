@@ -1,6 +1,8 @@
 package io.holunda.axon.camunda.example.hotel
 
+import io.holunda.axon.camunda.example.end
 import io.holunda.axon.camunda.example.interval
+import io.holunda.axon.camunda.example.start
 import mu.KLogging
 import org.axonframework.commandhandling.CommandHandler
 import org.axonframework.commandhandling.model.AggregateIdentifier
@@ -37,6 +39,20 @@ class HotelBooking() {
       hotelConfirmationCode = "${c.hotelName}_${c.guestName}_${c.reservationId}",
       reservationId = c.reservationId
     ))
+  }
+
+  @CommandHandler
+  fun handle(c: CancelHotel) {
+    if (reserved.containsKey(c.hotelConfirmationCode)) {
+      apply(
+        HotelCancelled(
+          arrival = start(reserved[c.hotelConfirmationCode]!!),
+          departure = end(reserved[c.hotelConfirmationCode]!!),
+          hotelConfirmationCode = c.hotelConfirmationCode,
+          reservationId = c.reservationId
+        )
+      )
+    }
   }
 
   @EventSourcingHandler

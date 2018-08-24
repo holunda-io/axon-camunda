@@ -20,6 +20,14 @@ data class BookHotel(
   val reservationId: String = UUID.randomUUID().toString()
 )
 
+data class CancelHotel(
+  @TargetAggregateIdentifier
+  val hotelName: String,
+  val hotelConfirmationCode: String,
+  val reservationId: String = UUID.randomUUID().toString()
+)
+
+
 data class HotelCreated(
   val hotelName: String,
   val city: String
@@ -31,6 +39,14 @@ data class HotelBooked(
   val departure: LocalDate,
   val guestName: String,
   val hotelName: String,
+  @EventCorrelationId
+  val reservationId: String,
+  val hotelConfirmationCode: String
+)
+
+data class HotelCancelled(
+  val arrival: LocalDate,
+  val departure: LocalDate,
   @EventCorrelationId
   val reservationId: String,
   val hotelConfirmationCode: String
