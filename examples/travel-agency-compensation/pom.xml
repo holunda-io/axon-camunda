@@ -30,10 +30,6 @@
       <artifactId>camunda-bpm-spring-boot-starter-webapp-ee</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.camunda.bpm.webapp</groupId>
-      <artifactId>camunda-webapp-ee-plugins</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.camunda.bpm.springboot</groupId>
       <artifactId>camunda-bpm-spring-boot-starter-rest</artifactId>
     </dependency>

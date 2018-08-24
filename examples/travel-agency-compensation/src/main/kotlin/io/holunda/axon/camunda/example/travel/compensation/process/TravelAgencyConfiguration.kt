@@ -3,10 +3,7 @@ package io.holunda.axon.camunda.example.travel.compensation.process
 import io.holunda.axon.camunda.AbstractEventCommandFactory
 import io.holunda.axon.camunda.CamundaAxonEventCommandFactoryRegistry
 import io.holunda.axon.camunda.CamundaEvent
-import io.holunda.axon.camunda.example.travel.compensation.travel.airline.BookFlight
-import io.holunda.axon.camunda.example.travel.compensation.travel.airline.CreateFlight
-import io.holunda.axon.camunda.example.travel.compensation.travel.airline.FlightBooked
-import io.holunda.axon.camunda.example.travel.compensation.travel.airline.FlightBookingNotPossibleException
+import io.holunda.axon.camunda.example.travel.compensation.travel.airline.*
 import io.holunda.axon.camunda.example.travel.compensation.travel.hotel.*
 import io.holunda.spring.DefaultSmartLifecycle
 import io.holunda.spring.io.holunda.axon.camunda.example.process.Reservation
@@ -31,7 +28,7 @@ open class TravelAgencyConfiguration(private val gateway: CommandGateway) {
       val now = LocalDateTime.now();
 
       gateway.send<Any, Any>(CreateHotel("Astoria", "Hamburg"), LoggingCallback.INSTANCE)
-      gateway.send<Any, Any>(CreateFlight("LH-123", now, now.plusHours(2), "HAM", "MUC", 10), LoggingCallback.INSTANCE)
+      gateway.send<Any, Any>(CreateFlight("LH-123", now, now.plusHours(2), "HAM", "MUC", 0), LoggingCallback.INSTANCE)
       gateway.send<Any, Any>(CreateFlight("LH-124", now.plusHours(8), now.plusHours(10), "MUC", "HAM", 10), LoggingCallback.INSTANCE)
     }
   }
@@ -100,6 +97,8 @@ open class TravelAgencyConfiguration(private val gateway: CommandGateway) {
 
       override fun error(cause: Throwable): BpmnError? =
         when (cause) {
+          is NoSeatsAvailable ->
+            BpmnError(MessageBasedTravelProcessWithCompensation.Errors.ERROR_BOOKING_FLIGHT, cause.message)
           is FlightBookingNotPossibleException ->
             BpmnError(MessageBasedTravelProcessWithCompensation.Errors.ERROR_BOOKING_FLIGHT, cause.message)
           is HotelReservationNotPossibleException ->
