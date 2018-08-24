@@ -18,7 +18,7 @@
   <modules>
     <module>axon-camunda</module>
     <module>axon-camunda-annotations</module>
-    <module>example</module>
+    <module>examples</module>
   </modules>
 
   <properties>
@@ -34,7 +34,7 @@
     <axon.version>3.2</axon.version>
     <spring-validator.version>1.1.0</spring-validator.version>
 
-    <camunda.version>7.9.0</camunda.version>
+    <camunda.version>7.9.2-ee</camunda.version>
     <version.camunda.spin>1.5.1</version.camunda.spin>
     <camunda-spring-boot.version>3.0.0</camunda-spring-boot.version>
     <jackson.version>2.9.5</jackson.version>
@@ -58,8 +58,13 @@
 
       <dependency>
         <groupId>org.camunda.bpm.springboot</groupId>
-        <artifactId>camunda-bpm-spring-boot-starter-webapp</artifactId>
+        <artifactId>camunda-bpm-spring-boot-starter-webapp-ee</artifactId>
         <version>${camunda-spring-boot.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.camunda.bpm.webapp</groupId>
+        <artifactId>camunda-webapp-ee-plugins</artifactId>
+        <version>${camunda.version}</version>
       </dependency>
       <dependency>
         <groupId>org.camunda.bpm.springboot</groupId>
@@ -221,4 +226,12 @@
       </plugin>
     </plugins>
   </build>
+
+  <repositories>
+    <repository>
+      <id>camunda-bpm-ee</id>
+      <name>camunda-bpm-ee</name>
+      <url>https://app.camunda.com/nexus/content/repositories/camunda-bpm-ee</url>
+    </repository>
+  </repositories>
 </project>

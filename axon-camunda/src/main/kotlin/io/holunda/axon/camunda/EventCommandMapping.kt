@@ -15,10 +15,6 @@ interface CamundaAxonEventFactory {
    */
   fun event(payload: Any, metadata: MetaData): CamundaEvent? = null
 
-  /**
-   * Maps an Axon error thrown by the Aggregate to a BPMN error relevant for the execution.
-   */
-  fun error(cause: Throwable): BpmnError? = null
 }
 
 /**
@@ -32,6 +28,12 @@ interface CamundaAxonCommandFactory {
   fun command(messageName: String, execution: DelegateExecution): Any {
     throw UnknownCommandException()
   }
+
+  /**
+   * Maps an Axon error thrown by the Aggregate to a BPMN error relevant for the execution.
+   */
+  fun error(cause: Throwable): BpmnError? = null
+
 }
 
 /**

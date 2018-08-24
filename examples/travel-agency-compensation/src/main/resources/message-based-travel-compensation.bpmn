@@ -1,0 +1,487 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_13jdphk" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.15.1">
+  <bpmn:collaboration id="Collaboration_1ez06i9">
+    <bpmn:participant id="process_travel_compensation" processRef="travel-compensation" />
+    <bpmn:participant id="Participant_05jlhbg" name="Hotel Reservation Service" />
+    <bpmn:participant id="Participant_0699sgo" name="Flight Reservation Service" />
+    <bpmn:messageFlow id="MessageFlow_0bhdkg5" sourceRef="send_book_hotel" targetRef="Participant_05jlhbg" />
+    <bpmn:messageFlow id="MessageFlow_1syrf9g" sourceRef="Participant_05jlhbg" targetRef="receiveHotelBooked" />
+    <bpmn:messageFlow id="MessageFlow_0d8y6jo" sourceRef="bookFlight" targetRef="Participant_0699sgo" />
+    <bpmn:messageFlow id="MessageFlow_14041qo" sourceRef="Participant_0699sgo" targetRef="flightBooked" />
+    <bpmn:messageFlow id="MessageFlow_0e50bm0" sourceRef="cancelHotel" targetRef="Participant_05jlhbg" />
+    <bpmn:messageFlow id="MessageFlow_12lbff1" sourceRef="Participant_05jlhbg" targetRef="receiveHotelCancelled" />
+  </bpmn:collaboration>
+  <bpmn:process id="travel-compensation" name="Message Base Travel with Compensation" isExecutable="true">
+    <bpmn:startEvent id="start">
+      <bpmn:outgoing>SequenceFlow_18l4kso</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="service_prepare_reservation" name="Prepare&#10;Reservation" camunda:delegateExpression="${bookingPreparationService}">
+      <bpmn:incoming>SequenceFlow_18l4kso</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0d5tcfz</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:subProcess id="compensate_cancel_hotel" name="Cancel Hotel" isForCompensation="true">
+      <bpmn:startEvent id="StartEvent_1e86enk">
+        <bpmn:outgoing>SequenceFlow_1fyu73g</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_1fyu73g" sourceRef="StartEvent_1e86enk" targetRef="ExclusiveGateway_0l729fa" />
+      <bpmn:sequenceFlow id="SequenceFlow_0n08p4s" sourceRef="cancelHotel" targetRef="ExclusiveGateway_0cfe9yy" />
+      <bpmn:endEvent id="EndEvent_0x8wlii">
+        <bpmn:incoming>SequenceFlow_0cr8m6d</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_0v2q3z0" sourceRef="ExclusiveGateway_0cfe9yy" targetRef="service_record_compensation" />
+      <bpmn:intermediateThrowEvent id="cancelHotel" name="Cancel Hotel" camunda:asyncBefore="true">
+        <bpmn:incoming>SequenceFlow_0g5a0j4</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_0n08p4s</bpmn:outgoing>
+        <bpmn:messageEventDefinition messageRef="Message_0usz8yj" camunda:delegateExpression="${commandSender}" />
+      </bpmn:intermediateThrowEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_0g5a0j4" sourceRef="ExclusiveGateway_0l729fa" targetRef="cancelHotel" />
+      <bpmn:sequenceFlow id="SequenceFlow_1ptxsf1" sourceRef="ExclusiveGateway_0l729fa" targetRef="receiveHotelCancelled" />
+      <bpmn:sequenceFlow id="SequenceFlow_1amlj19" sourceRef="receiveHotelCancelled" targetRef="ExclusiveGateway_0cfe9yy" />
+      <bpmn:intermediateCatchEvent id="receiveHotelCancelled">
+        <bpmn:incoming>SequenceFlow_1ptxsf1</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_1amlj19</bpmn:outgoing>
+        <bpmn:messageEventDefinition messageRef="Message_0zmfg9e" />
+      </bpmn:intermediateCatchEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_0cr8m6d" sourceRef="service_record_compensation" targetRef="EndEvent_0x8wlii" />
+      <bpmn:serviceTask id="service_record_compensation" name="Record Compensation" camunda:delegateExpression="${recordCompensation}">
+        <bpmn:incoming>SequenceFlow_0v2q3z0</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_0cr8m6d</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:parallelGateway id="ExclusiveGateway_0l729fa">
+        <bpmn:incoming>SequenceFlow_1fyu73g</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_0g5a0j4</bpmn:outgoing>
+        <bpmn:outgoing>SequenceFlow_1ptxsf1</bpmn:outgoing>
+      </bpmn:parallelGateway>
+      <bpmn:parallelGateway id="ExclusiveGateway_0cfe9yy">
+        <bpmn:incoming>SequenceFlow_0n08p4s</bpmn:incoming>
+        <bpmn:incoming>SequenceFlow_1amlj19</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_0v2q3z0</bpmn:outgoing>
+      </bpmn:parallelGateway>
+      <bpmn:association id="Association_0mw8l0e" sourceRef="cancelHotel" targetRef="TextAnnotation_1nmzp0w" />
+      <bpmn:textAnnotation id="TextAnnotation_1nmzp0w">
+        <bpmn:text>async before</bpmn:text>
+      </bpmn:textAnnotation>
+    </bpmn:subProcess>
+    <bpmn:endEvent id="end">
+      <bpmn:incoming>SequenceFlow_0zufc8k</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="service_log_booking" name="Log Reservation Details" camunda:delegateExpression="${loggingService}">
+      <bpmn:incoming>SequenceFlow_0dbpz3j</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0zufc8k</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_0v8z7hf">
+      <bpmn:incoming>SequenceFlow_0jfoth7</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_071g6ts</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0dbpz3j</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:subProcess id="Task_1efjoeh">
+      <bpmn:incoming>SequenceFlow_185ar5j</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0jfoth7</bpmn:outgoing>
+      <bpmn:startEvent id="StartEvent_0wqxq3f">
+        <bpmn:outgoing>SequenceFlow_00tlbad</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_00tlbad" sourceRef="StartEvent_0wqxq3f" targetRef="ExclusiveGateway_1d4tegu" />
+      <bpmn:parallelGateway id="ExclusiveGateway_1d4tegu">
+        <bpmn:incoming>SequenceFlow_00tlbad</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_0cjujfw</bpmn:outgoing>
+        <bpmn:outgoing>SequenceFlow_1k076gv</bpmn:outgoing>
+      </bpmn:parallelGateway>
+      <bpmn:sequenceFlow id="SequenceFlow_0cjujfw" sourceRef="ExclusiveGateway_1d4tegu" targetRef="bookFlight" />
+      <bpmn:sequenceFlow id="SequenceFlow_1k076gv" sourceRef="ExclusiveGateway_1d4tegu" targetRef="flightBooked" />
+      <bpmn:sequenceFlow id="SequenceFlow_0iab7al" sourceRef="flightBooked" targetRef="ExclusiveGateway_1vg98ph" />
+      <bpmn:endEvent id="EndEvent_1q6jgt3">
+        <bpmn:incoming>SequenceFlow_1po2tzz</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_1po2tzz" sourceRef="ExclusiveGateway_1vg98ph" targetRef="EndEvent_1q6jgt3" />
+      <bpmn:sequenceFlow id="SequenceFlow_1xhyzr3" sourceRef="bookFlight" targetRef="ExclusiveGateway_1vg98ph" />
+      <bpmn:parallelGateway id="ExclusiveGateway_1vg98ph">
+        <bpmn:incoming>SequenceFlow_0iab7al</bpmn:incoming>
+        <bpmn:incoming>SequenceFlow_1xhyzr3</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_1po2tzz</bpmn:outgoing>
+      </bpmn:parallelGateway>
+      <bpmn:intermediateCatchEvent id="flightBooked" name="Flight Booked">
+        <bpmn:incoming>SequenceFlow_1k076gv</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_0iab7al</bpmn:outgoing>
+        <bpmn:messageEventDefinition messageRef="Message_1ss8fij" />
+      </bpmn:intermediateCatchEvent>
+      <bpmn:intermediateThrowEvent id="bookFlight" name="Flight Booked" camunda:asyncBefore="true">
+        <bpmn:incoming>SequenceFlow_0cjujfw</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_1xhyzr3</bpmn:outgoing>
+        <bpmn:messageEventDefinition messageRef="Message_1fhf42c" camunda:delegateExpression="${commandSender}" />
+      </bpmn:intermediateThrowEvent>
+      <bpmn:association id="Association_17g4h06" sourceRef="bookFlight" targetRef="TextAnnotation_0ssk40d" />
+      <bpmn:textAnnotation id="TextAnnotation_0ssk40d">
+        <bpmn:text>async before</bpmn:text>
+      </bpmn:textAnnotation>
+    </bpmn:subProcess>
+    <bpmn:intermediateThrowEvent id="EndEvent_0al2i5v" name="Compensate Hotel Reservation">
+      <bpmn:incoming>SequenceFlow_0fmv2y3</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_071g6ts</bpmn:outgoing>
+      <bpmn:compensateEventDefinition />
+    </bpmn:intermediateThrowEvent>
+    <bpmn:boundaryEvent id="error_flight_booking" attachedToRef="Task_1efjoeh">
+      <bpmn:outgoing>SequenceFlow_0fmv2y3</bpmn:outgoing>
+      <bpmn:errorEventDefinition errorRef="Error_0tglmt4" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0fmv2y3" sourceRef="error_flight_booking" targetRef="EndEvent_0al2i5v" />
+    <bpmn:sequenceFlow id="SequenceFlow_071g6ts" sourceRef="EndEvent_0al2i5v" targetRef="ExclusiveGateway_0v8z7hf" />
+    <bpmn:sequenceFlow id="SequenceFlow_0jfoth7" sourceRef="Task_1efjoeh" targetRef="ExclusiveGateway_0v8z7hf" />
+    <bpmn:sequenceFlow id="SequenceFlow_0dbpz3j" sourceRef="ExclusiveGateway_0v8z7hf" targetRef="service_log_booking" />
+    <bpmn:sequenceFlow id="SequenceFlow_0zufc8k" sourceRef="service_log_booking" targetRef="end" />
+    <bpmn:sequenceFlow id="SequenceFlow_0d5tcfz" sourceRef="service_prepare_reservation" targetRef="ExclusiveGateway_07ib5tu" />
+    <bpmn:sequenceFlow id="SequenceFlow_18l4kso" sourceRef="start" targetRef="service_prepare_reservation" />
+    <bpmn:sendTask id="send_book_hotel" name="Book Hotel" camunda:asyncBefore="true" camunda:expression="${messageCommandSender.send(&#39;bookHotel&#39;, execution)}">
+      <bpmn:incoming>SequenceFlow_1yrndgu</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_15oxz9v</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:boundaryEvent id="BoundaryEvent_08c95dv" attachedToRef="send_book_hotel">
+      <bpmn:compensateEventDefinition />
+    </bpmn:boundaryEvent>
+    <bpmn:parallelGateway id="ExclusiveGateway_07ib5tu">
+      <bpmn:incoming>SequenceFlow_0d5tcfz</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1yrndgu</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_0kw17jz</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_1yrndgu" sourceRef="ExclusiveGateway_07ib5tu" targetRef="send_book_hotel" />
+    <bpmn:parallelGateway id="ExclusiveGateway_1pwtr3r">
+      <bpmn:incoming>SequenceFlow_15oxz9v</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_1lbid6o</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_185ar5j</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_15oxz9v" sourceRef="send_book_hotel" targetRef="ExclusiveGateway_1pwtr3r" />
+    <bpmn:sequenceFlow id="SequenceFlow_185ar5j" sourceRef="ExclusiveGateway_1pwtr3r" targetRef="Task_1efjoeh" />
+    <bpmn:intermediateCatchEvent id="receiveHotelBooked" name="Hotel Booked">
+      <bpmn:incoming>SequenceFlow_0kw17jz</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1lbid6o</bpmn:outgoing>
+      <bpmn:messageEventDefinition messageRef="Message_0ce3ncc" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0kw17jz" sourceRef="ExclusiveGateway_07ib5tu" targetRef="receiveHotelBooked" />
+    <bpmn:sequenceFlow id="SequenceFlow_1lbid6o" sourceRef="receiveHotelBooked" targetRef="ExclusiveGateway_1pwtr3r" />
+    <bpmn:sequenceFlow id="SequenceFlow_0o44mjb" sourceRef="error_hotel_booking" targetRef="EndEvent_1vcb5bn" />
+    <bpmn:boundaryEvent id="error_hotel_booking" name="Error Hotel Booking Occured" attachedToRef="send_book_hotel">
+      <bpmn:outgoing>SequenceFlow_0o44mjb</bpmn:outgoing>
+      <bpmn:errorEventDefinition errorRef="Error_177sevu" />
+    </bpmn:boundaryEvent>
+    <bpmn:endEvent id="EndEvent_1vcb5bn" name="Hotel Booking Error occured">
+      <bpmn:incoming>SequenceFlow_0o44mjb</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:textAnnotation id="TextAnnotation_1koqusi">
+      <bpmn:text>async after</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0ctihem" sourceRef="start" targetRef="TextAnnotation_1koqusi" />
+    <bpmn:association id="Association_0ug7fiw" associationDirection="One" sourceRef="BoundaryEvent_08c95dv" targetRef="compensate_cancel_hotel" />
+    <bpmn:textAnnotation id="TextAnnotation_0om3chn">
+      <bpmn:text>async before</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1odoh1v" sourceRef="send_book_hotel" targetRef="TextAnnotation_0om3chn" />
+  </bpmn:process>
+  <bpmn:message id="Message_1y2ikvu" name="bookHotel" />
+  <bpmn:message id="Message_0ce3ncc" name="hotelBooked" />
+  <bpmn:message id="Message_1fhf42c" name="bookFlight" />
+  <bpmn:message id="Message_1ss8fij" name="flightBooked" />
+  <bpmn:message id="Message_0usz8yj" name="cancelHotel" />
+  <bpmn:message id="Message_0zmfg9e" name="hotelCancelled" />
+  <bpmn:error id="Error_177sevu" name="Hotel Booking Error" errorCode="ErrorBookingHotel" />
+  <bpmn:error id="Error_0tglmt4" name="Flight Booking Error" errorCode="ErrorBookingFlight" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1ez06i9">
+      <bpmndi:BPMNShape id="Participant_0auz12y_di" bpmnElement="process_travel_compensation">
+        <dc:Bounds x="63" y="346" width="1748" height="848" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="start">
+        <dc:Bounds x="114" y="857" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_18l4kso_di" bpmnElement="SequenceFlow_18l4kso">
+        <di:waypoint x="150" y="875" />
+        <di:waypoint x="200" y="875" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0d5tcfz_di" bpmnElement="SequenceFlow_0d5tcfz">
+        <di:waypoint x="300" y="876" />
+        <di:waypoint x="325" y="875" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="SubProcess_1v5gbep_di" bpmnElement="Task_1efjoeh" isExpanded="true">
+        <dc:Bounds x="1074" y="720" width="436" height="310" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0jfoth7_di" bpmnElement="SequenceFlow_0jfoth7">
+        <di:waypoint x="1510" y="875" />
+        <di:waypoint x="1539" y="875" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_1a5ct0s_di" bpmnElement="end">
+        <dc:Bounds x="1738" y="857" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0zufc8k_di" bpmnElement="SequenceFlow_0zufc8k">
+        <di:waypoint x="1704" y="875" />
+        <di:waypoint x="1738" y="875" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_1qcj177_di" bpmnElement="service_log_booking">
+        <dc:Bounds x="1604" y="835" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_1d5jtlo_di" bpmnElement="service_prepare_reservation">
+        <dc:Bounds x="200" y="835" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1koqusi_di" bpmnElement="TextAnnotation_1koqusi">
+        <dc:Bounds x="150" y="777" width="100" height="30" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_0ctihem_di" bpmnElement="Association_0ctihem">
+        <di:waypoint x="143" y="861" />
+        <di:waypoint x="188" y="807" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Participant_14nm4za_di" bpmnElement="Participant_05jlhbg">
+        <dc:Bounds x="448" y="105" width="555" height="101" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Participant_1xvxim3_di" bpmnElement="Participant_0699sgo">
+        <dc:Bounds x="1111" y="105" width="340" height="103" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BoundaryEvent_06ivzz4_di" bpmnElement="error_hotel_booking">
+        <dc:Bounds x="410" y="817" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="338" y="791" width="85" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="MessageFlow_0bhdkg5_di" bpmnElement="MessageFlow_0bhdkg5">
+        <di:waypoint x="464" y="835" />
+        <di:waypoint x="464" y="206" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_13cw6lq_di" bpmnElement="receiveHotelBooked">
+        <dc:Bounds x="480" y="993" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="465" y="1029" width="67" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="MessageFlow_1syrf9g_di" bpmnElement="MessageFlow_1syrf9g">
+        <di:waypoint x="620" y="206" />
+        <di:waypoint x="575" y="780" />
+        <di:waypoint x="504" y="994" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ParallelGateway_0v70tjb_di" bpmnElement="ExclusiveGateway_07ib5tu">
+        <dc:Bounds x="325" y="850" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ParallelGateway_1unug7s_di" bpmnElement="ExclusiveGateway_1pwtr3r">
+        <dc:Bounds x="575" y="850" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_0wqxq3f_di" bpmnElement="StartEvent_0wqxq3f">
+        <dc:Bounds x="1109" y="858" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_00tlbad_di" bpmnElement="SequenceFlow_00tlbad">
+        <di:waypoint x="1145" y="876" />
+        <di:waypoint x="1195" y="876" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ParallelGateway_1yzkwp6_di" bpmnElement="ExclusiveGateway_1d4tegu">
+        <dc:Bounds x="1195" y="851" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0cjujfw_di" bpmnElement="SequenceFlow_0cjujfw">
+        <di:waypoint x="1220" y="851" />
+        <di:waypoint x="1220" y="789" />
+        <di:waypoint x="1245" y="789" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1k076gv_di" bpmnElement="SequenceFlow_1k076gv">
+        <di:waypoint x="1220" y="901" />
+        <di:waypoint x="1220" y="958" />
+        <di:waypoint x="1288" y="958" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0iab7al_di" bpmnElement="SequenceFlow_0iab7al">
+        <di:waypoint x="1324" y="958" />
+        <di:waypoint x="1373" y="958" />
+        <di:waypoint x="1373" y="901" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_1q6jgt3_di" bpmnElement="EndEvent_1q6jgt3">
+        <dc:Bounds x="1422" y="858" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1po2tzz_di" bpmnElement="SequenceFlow_1po2tzz">
+        <di:waypoint x="1398" y="876" />
+        <di:waypoint x="1422" y="876" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1xhyzr3_di" bpmnElement="SequenceFlow_1xhyzr3">
+        <di:waypoint x="1281" y="789" />
+        <di:waypoint x="1373" y="789" />
+        <di:waypoint x="1373" y="851" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ParallelGateway_1rk4eii_di" bpmnElement="ExclusiveGateway_1vg98ph">
+        <dc:Bounds x="1348" y="851" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="MessageFlow_0d8y6jo_di" bpmnElement="MessageFlow_0d8y6jo">
+        <di:waypoint x="1263" y="771" />
+        <di:waypoint x="1263" y="208" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_198546f_di" bpmnElement="flightBooked">
+        <dc:Bounds x="1288" y="940" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1272" y="976" width="68" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="IntermediateThrowEvent_0zv32m8_di" bpmnElement="bookFlight">
+        <dc:Bounds x="1245" y="771" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1229" y="807" width="68" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="MessageFlow_14041qo_di" bpmnElement="MessageFlow_14041qo">
+        <di:waypoint x="1342" y="208" />
+        <di:waypoint x="1342" y="518" />
+        <di:waypoint x="1307" y="518" />
+        <di:waypoint x="1307" y="940" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0fmv2y3_di" bpmnElement="SequenceFlow_0fmv2y3">
+        <di:waypoint x="1454" y="1048" />
+        <di:waypoint x="1454" y="1110" />
+        <di:waypoint x="1492" y="1110" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="BoundaryEvent_1ummkab_di" bpmnElement="error_flight_booking">
+        <dc:Bounds x="1436" y="1012" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BoundaryEvent_04xkvbe_di" bpmnElement="BoundaryEvent_08c95dv">
+        <dc:Bounds x="480" y="817" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_0ug7fiw_di" bpmnElement="Association_0ug7fiw">
+        <di:waypoint x="516" y="835" />
+        <di:waypoint x="542" y="835" />
+        <di:waypoint x="542" y="508" />
+        <di:waypoint x="707" y="508" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="SubProcess_16wzzyd_di" bpmnElement="compensate_cancel_hotel" isExpanded="true">
+        <dc:Bounds x="707" y="399" width="503" height="250" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_1e86enk_di" bpmnElement="StartEvent_1e86enk">
+        <dc:Bounds x="728" y="505" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1fyu73g_di" bpmnElement="SequenceFlow_1fyu73g">
+        <di:waypoint x="764" y="523" />
+        <di:waypoint x="784" y="523" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0n08p4s_di" bpmnElement="SequenceFlow_0n08p4s">
+        <di:waypoint x="876" y="465" />
+        <di:waypoint x="927" y="465" />
+        <di:waypoint x="927" y="498" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_0x8wlii_di" bpmnElement="EndEvent_0x8wlii">
+        <dc:Bounds x="1138" y="505" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0v2q3z0_di" bpmnElement="SequenceFlow_0v2q3z0">
+        <di:waypoint x="952" y="523" />
+        <di:waypoint x="992" y="523" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="IntermediateThrowEvent_1ge8nim_di" bpmnElement="cancelHotel">
+        <dc:Bounds x="840" y="447" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="826" y="483" width="64" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0g5a0j4_di" bpmnElement="SequenceFlow_0g5a0j4">
+        <di:waypoint x="809" y="523" />
+        <di:waypoint x="809" y="465" />
+        <di:waypoint x="840" y="465" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1ptxsf1_di" bpmnElement="SequenceFlow_1ptxsf1">
+        <di:waypoint x="809" y="548" />
+        <di:waypoint x="809" y="579" />
+        <di:waypoint x="871" y="579" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1amlj19_di" bpmnElement="SequenceFlow_1amlj19">
+        <di:waypoint x="907" y="579" />
+        <di:waypoint x="927" y="579" />
+        <di:waypoint x="927" y="548" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_0klm6ho_di" bpmnElement="receiveHotelCancelled">
+        <dc:Bounds x="871" y="561" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="MessageFlow_0e50bm0_di" bpmnElement="MessageFlow_0e50bm0">
+        <di:waypoint x="858" y="447" />
+        <di:waypoint x="858" y="206" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MessageFlow_12lbff1_di" bpmnElement="MessageFlow_12lbff1">
+        <di:waypoint x="907" y="206" />
+        <di:waypoint x="907" y="387" />
+        <di:waypoint x="897" y="387" />
+        <di:waypoint x="897" y="563" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="TextAnnotation_0om3chn_di" bpmnElement="TextAnnotation_0om3chn">
+        <dc:Bounds x="221" y="683" width="100" height="30" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0ssk40d_di" bpmnElement="TextAnnotation_0ssk40d">
+        <dc:Bounds x="1141" y="732" width="100" height="30" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_17g4h06_di" bpmnElement="Association_17g4h06">
+        <di:waypoint x="1247" y="780" />
+        <di:waypoint x="1217" y="762" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="TextAnnotation_1nmzp0w_di" bpmnElement="TextAnnotation_1nmzp0w">
+        <dc:Bounds x="727" y="419" width="99" height="33" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_0mw8l0e_di" bpmnElement="Association_0mw8l0e">
+        <di:waypoint x="841" y="459" />
+        <di:waypoint x="822" y="452" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="IntermediateThrowEvent_05b54s2_di" bpmnElement="EndEvent_0al2i5v">
+        <dc:Bounds x="1492" y="1092" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1466" y="1135" width="88" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_0v8z7hf_di" bpmnElement="ExclusiveGateway_0v8z7hf" isMarkerVisible="true">
+        <dc:Bounds x="1539" y="850" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0dbpz3j_di" bpmnElement="SequenceFlow_0dbpz3j">
+        <di:waypoint x="1564" y="875" />
+        <di:waypoint x="1604" y="875" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_071g6ts_di" bpmnElement="SequenceFlow_071g6ts">
+        <di:waypoint x="1528" y="1110" />
+        <di:waypoint x="1564" y="1110" />
+        <di:waypoint x="1564" y="900" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0cr8m6d_di" bpmnElement="SequenceFlow_0cr8m6d">
+        <di:waypoint x="1092" y="523" />
+        <di:waypoint x="1138" y="523" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_0skg0gv_di" bpmnElement="service_record_compensation">
+        <dc:Bounds x="992" y="483" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ParallelGateway_0tglot3_di" bpmnElement="ExclusiveGateway_0l729fa">
+        <dc:Bounds x="784" y="498" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ParallelGateway_0vl3h4l_di" bpmnElement="ExclusiveGateway_0cfe9yy">
+        <dc:Bounds x="902" y="498" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SendTask_0ctqxt7_di" bpmnElement="send_book_hotel">
+        <dc:Bounds x="398" y="835" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1yrndgu_di" bpmnElement="SequenceFlow_1yrndgu">
+        <di:waypoint x="375" y="875" />
+        <di:waypoint x="398" y="875" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_15oxz9v_di" bpmnElement="SequenceFlow_15oxz9v">
+        <di:waypoint x="498" y="875" />
+        <di:waypoint x="575" y="875" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_185ar5j_di" bpmnElement="SequenceFlow_185ar5j">
+        <di:waypoint x="625" y="875" />
+        <di:waypoint x="1074" y="875" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0kw17jz_di" bpmnElement="SequenceFlow_0kw17jz">
+        <di:waypoint x="350" y="900" />
+        <di:waypoint x="350" y="1011" />
+        <di:waypoint x="480" y="1011" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1lbid6o_di" bpmnElement="SequenceFlow_1lbid6o">
+        <di:waypoint x="516" y="1011" />
+        <di:waypoint x="600" y="1011" />
+        <di:waypoint x="600" y="900" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0o44mjb_di" bpmnElement="SequenceFlow_0o44mjb">
+        <di:waypoint x="428" y="817" />
+        <di:waypoint x="428" y="677" />
+        <di:waypoint x="398" y="677" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1odoh1v_di" bpmnElement="Association_1odoh1v">
+        <di:waypoint x="408" y="835" />
+        <di:waypoint x="286" y="713" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_0p54noa_di" bpmnElement="EndEvent_1vcb5bn">
+        <dc:Bounds x="362" y="659" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="346" y="702" width="69" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

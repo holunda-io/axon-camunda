@@ -1,0 +1,20 @@
+server:
+  port: 9091
+camunda:
+  bpm:
+    default-serialization-format: application/json
+    admin-user:
+      id: admin
+      password: admin
+      email: admin@admin.org
+      first-name: Admin
+      last-name: Administratos
+    history-level: activity
+spring:
+  jackson:
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: false
+
+axon:
+  camunda:
+    send-signals: false
