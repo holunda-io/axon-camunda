@@ -15,6 +15,27 @@
       <groupId>io.holunda.axon</groupId>
       <artifactId>axon-camunda</artifactId>
     </dependency>
+
+    <!-- SPIN -->
+    <dependency>
+      <groupId>org.camunda.bpm</groupId>
+      <artifactId>camunda-engine-plugin-spin</artifactId>
+      <version>${camunda.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.camunda.spin</groupId>
+      <artifactId>camunda-spin-dataformat-json-jackson</artifactId>
+      <version>${version.camunda.spin}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-jsr310</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.module</groupId>
+      <artifactId>jackson-module-kotlin</artifactId>
+    </dependency>
+
     <!-- Testing -->
     <dependency>
       <groupId>org.axonframework</groupId>
@@ -31,6 +52,8 @@
       <artifactId>assertj-core</artifactId>
       <scope>test</scope>
     </dependency>
+
+
   </dependencies>
 
 </project>

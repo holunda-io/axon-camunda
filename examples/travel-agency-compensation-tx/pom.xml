@@ -8,7 +8,7 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
 
-  <artifactId>axon-travel-agency-minimal</artifactId>
+  <artifactId>axon-travel-agency-compensation-tx</artifactId>
 
   <dependencies>
     <dependency>

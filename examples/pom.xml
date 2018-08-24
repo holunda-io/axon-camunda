@@ -15,6 +15,7 @@
     <module>travel-agency-common</module>
     <module>travel-agency-minimal</module>
     <module>travel-agency-compensation</module>
+    <module>travel-agency-compensation-tx</module>
   </modules>
 
   <dependencyManagement>
@@ -22,16 +23,6 @@
       <dependency>
         <groupId>io.holunda.axon</groupId>
         <artifactId>axon-travel-agency-common</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>io.holunda.axon</groupId>
-        <artifactId>axon-travel-agency-minimal</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>io.holunda.axon</groupId>
-        <artifactId>axon-travel-agency-compensation</artifactId>
         <version>${project.version}</version>
       </dependency>
     </dependencies>

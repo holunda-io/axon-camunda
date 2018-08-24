@@ -1,8 +1,6 @@
 package io.holunda.axon.camunda
 
 import mu.KLogging
-import org.axonframework.commandhandling.CommandCallback
-import org.axonframework.commandhandling.CommandMessage
 import org.axonframework.commandhandling.gateway.CommandGateway
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.engine.delegate.JavaDelegate
@@ -34,7 +32,7 @@ class MessageCommandSender(
 }
 
 
-fun sendCommand(gateway: CommandGateway, execution: DelegateExecution, registry: CamundaAxonEventCommandFactoryRegistry, messageName: String) {
+internal fun sendCommand(gateway: CommandGateway, execution: DelegateExecution, registry: CamundaAxonEventCommandFactoryRegistry, messageName: String) {
   val factory = registry.commandFactory(execution.processDefinitionKey())
 
   val result = gateway.send<Any>(factory.command(messageName, execution))
@@ -45,19 +43,4 @@ fun sendCommand(gateway: CommandGateway, execution: DelegateExecution, registry:
     CommandSender.logger.error { "Error sending command $messageName. Throwing $error." }
     throw error
   }
-
-/*
-  gateway.send<Any, Any?>(factory.command(messageName, execution),
-    object : CommandCallback<Any, Any?> {
-      override fun onSuccess(commandMessage: CommandMessage<out Any>, result: Any?) {
-        CommandSender.logger.debug { "Successfully sent command message $commandMessage" }
-      }
-
-      override fun onFailure(commandMessage: CommandMessage<out Any>, cause: Throwable) {
-        val error = factory.error(cause) ?: cause
-        CommandSender.logger.error { "Error sending command $commandMessage. Throwing $error." }
-        throw error
-      }
-    })
- */
 }
