@@ -150,7 +150,7 @@
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="compensate_send_cancel_hotel">
       <bpmndi:BPMNShape id="Participant_0auz12y_di" bpmnElement="process_travel_compensation">
-        <dc:Bounds x="244" y="340" width="1748" height="848" />
+        <dc:Bounds x="244" y="340" width="1750" height="848" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="start">
         <dc:Bounds x="295" y="851" width="36" height="36" />
