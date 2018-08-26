@@ -22,6 +22,7 @@
   </modules>
 
   <properties>
+
     <projectConfigScan>false</projectConfigScan>
     <dockerfile.skip>true</dockerfile.skip>
 
@@ -34,10 +35,14 @@
     <axon.version>3.2</axon.version>
     <spring-validator.version>1.1.0</spring-validator.version>
 
-    <camunda.version>7.9.2-ee</camunda.version>
+    <camunda-ee>false</camunda-ee>
+    <camunda.version>7.9.0</camunda.version>
+    <camunda.version.ee>7.9.2-ee</camunda.version.ee>
+
     <version.camunda.spin>1.5.1</version.camunda.spin>
     <camunda-spring-boot.version>3.0.0</camunda-spring-boot.version>
     <jackson.version>2.9.5</jackson.version>
+
   </properties>
 
   <dependencyManagement>
@@ -56,11 +61,6 @@
         <version>2.4.5</version>
       </dependency>
 
-      <dependency>
-        <groupId>org.camunda.bpm.springboot</groupId>
-        <artifactId>camunda-bpm-spring-boot-starter-webapp-ee</artifactId>
-        <version>${camunda-spring-boot.version}</version>
-      </dependency>
       <dependency>
         <groupId>org.camunda.bpm.springboot</groupId>
         <artifactId>camunda-bpm-spring-boot-starter-rest</artifactId>
@@ -91,6 +91,14 @@
         <groupId>io.holunda.axon</groupId>
         <artifactId>axon-camunda</artifactId>
         <version>${project.version}</version>
+      </dependency>
+
+      <!-- Testing -->
+      <dependency>
+        <groupId>org.axonframework</groupId>
+        <artifactId>axon-test</artifactId>
+        <version>${axon.version}</version>
+        <scope>test</scope>
       </dependency>
 
     </dependencies>
@@ -222,11 +230,55 @@
     </plugins>
   </build>
 
-  <repositories>
-    <repository>
-      <id>camunda-bpm-ee</id>
-      <name>camunda-bpm-ee</name>
-      <url>https://app.camunda.com/nexus/content/repositories/camunda-bpm-ee</url>
-    </repository>
-  </repositories>
+  <profiles>
+
+    <profile>
+      <id>camunda-ce</id>
+      <activation>
+        <property>
+          <name>!camunda-ee</name>
+        </property>
+      </activation>
+      <dependencyManagement>
+        <dependencies>
+          <dependency>
+            <groupId>org.camunda.bpm.springboot</groupId>
+            <artifactId>camunda-bpm-spring-boot-starter-webapp</artifactId>
+            <version>${camunda-spring-boot.version}</version>
+          </dependency>
+        </dependencies>
+      </dependencyManagement>
+    </profile>
+
+    <profile>
+      <id>camunda-ee</id>
+      <activation>
+        <property>
+          <name>camunda-ee</name>
+        </property>
+      </activation>
+      <properties>
+        <camunda.version>${camunda.version.ee}</camunda.version>
+      </properties>
+      <repositories>
+        <repository>
+          <id>camunda-bpm-ee</id>
+          <name>camunda-bpm-ee</name>
+          <url>https://app.camunda.com/nexus/content/repositories/camunda-bpm-ee</url>
+        </repository>
+      </repositories>
+      <dependencyManagement>
+        <dependencies>
+          <dependency>
+            <groupId>org.camunda.bpm.springboot</groupId>
+            <artifactId>camunda-bpm-spring-boot-starter-webapp-ee</artifactId>
+            <version>${camunda-spring-boot.version}</version>
+          </dependency>
+        </dependencies>
+      </dependencyManagement>
+    </profile>
+
+
+  </profiles>
+
 </project>

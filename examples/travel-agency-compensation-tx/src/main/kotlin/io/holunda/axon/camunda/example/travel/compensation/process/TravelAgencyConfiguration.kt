@@ -5,7 +5,7 @@ import io.holunda.axon.camunda.CamundaAxonEventCommandFactoryRegistry
 import io.holunda.axon.camunda.CamundaEvent
 import io.holunda.axon.camunda.example.travel.airline.*
 import io.holunda.axon.camunda.example.travel.hotel.*
-import io.holunda.spring.DefaultSmartLifecycle
+import io.holunda.axon.camunda.spring.DefaultSmartLifecycle
 import io.holunda.spring.io.holunda.axon.camunda.example.process.Reservation
 import org.axonframework.commandhandling.callbacks.LoggingCallback
 import org.axonframework.commandhandling.gateway.CommandGateway
