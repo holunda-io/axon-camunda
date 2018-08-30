@@ -1,4 +1,4 @@
-package io.holunda.axon.camunda.example.travel.compensation.process
+package io.holunda.axon.camunda.example.travel.compensation.process.delegate
 
 import mu.KLogging
 import org.camunda.bpm.engine.delegate.DelegateExecution
@@ -6,7 +6,7 @@ import org.camunda.bpm.engine.delegate.JavaDelegate
 import org.springframework.stereotype.Component
 
 @Component
-class LoggingService : JavaDelegate {
+class Logger : JavaDelegate {
 
   companion object : KLogging()
 

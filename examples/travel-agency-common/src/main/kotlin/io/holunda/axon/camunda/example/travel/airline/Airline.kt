@@ -42,6 +42,18 @@ class Flight() {
     }
   }
 
+  @CommandHandler
+  fun handle(c: CancelFlight) {
+      apply(FlightCancelled(
+        flightNumber = this.flightNumber,
+        guestName = c.guestName,
+        departure = this.departureTime,
+        arrival = this.arrivalTime,
+        reservationId = c.reservationId)
+      )
+  }
+
+
   @EventSourcingHandler
   fun on(e: FlightCreated) {
     this.flightNumber = e.flightNumber
@@ -57,4 +69,11 @@ class Flight() {
     // decrease number of seats
     this.availableSeats.dec()
   }
+
+  @EventSourcingHandler
+  fun on(e: FlightCancelled) {
+    // increase number of seats
+    this.availableSeats.inc()
+  }
+
 }

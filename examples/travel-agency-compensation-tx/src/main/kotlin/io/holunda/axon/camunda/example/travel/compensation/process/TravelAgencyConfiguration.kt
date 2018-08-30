@@ -28,8 +28,10 @@ open class TravelAgencyConfiguration(private val gateway: CommandGateway) {
       val now = LocalDateTime.now();
 
       gateway.send<Any, Any>(CreateHotel("Astoria", "Hamburg"), LoggingCallback.INSTANCE)
-      gateway.send<Any, Any>(CreateFlight("LH-123", now, now.plusHours(2), "HAM", "MUC", 0), LoggingCallback.INSTANCE)
-      gateway.send<Any, Any>(CreateFlight("LH-124", now.plusHours(8), now.plusHours(10), "MUC", "HAM", 10), LoggingCallback.INSTANCE)
+      gateway.send<Any, Any>(CreateHotel("Four Seasons", "München"), LoggingCallback.INSTANCE)
+      gateway.send<Any, Any>(CreateFlight("LH-123", now.plusHours(8), now.plusHours(10), "MUC", "HAM", 10), LoggingCallback.INSTANCE)
+      gateway.send<Any, Any>(CreateFlight("LH-124", now, now.plusHours(2), "HAM", "MUC", 10), LoggingCallback.INSTANCE)
+
     }
   }
 
@@ -57,8 +59,13 @@ open class TravelAgencyConfiguration(private val gateway: CommandGateway) {
           MessageBasedTravelProcessWithCompensation.Messages.CANCEL_HOTEL ->
             CancelHotel(
               hotelName = reservation.hotel,
-              hotelConfirmationCode = execution.getVariable(MessageBasedTravelProcessWithCompensation.Variables.HOTEL_CONFIRMATION_CODE) as String,
               reservationId = reservation.id)
+          MessageBasedTravelProcessWithCompensation.Messages.CANCEL_FLIGHT ->
+            CancelFlight(
+              guestName = reservation.name,
+              flightNumber = reservation.flightNumber,
+              reservationId = reservation.id)
+
           MessageBasedTravelProcessWithCompensation.Messages.BOOK_FLIGHT ->
             BookFlight(
               flightNumber = reservation.flightNumber,
@@ -92,6 +99,13 @@ open class TravelAgencyConfiguration(private val gateway: CommandGateway) {
               name = MessageBasedTravelProcessWithCompensation.Messages.FLIGHT_BOOKED,
               variables = mapOf<String, Any>(MessageBasedTravelProcessWithCompensation.Variables.TICKET_NUMBER to payload.ticketNumber),
               correlationVariableName = MessageBasedTravelProcessWithCompensation.Variables.RESERVATION_ID)
+
+          is FlightCancelled ->
+            CamundaEvent(
+              name = MessageBasedTravelProcessWithCompensation.Messages.FLIGHT_CANCELLED,
+              variables = mapOf(),
+              correlationVariableName = MessageBasedTravelProcessWithCompensation.Variables.RESERVATION_ID)
+
           else -> null
         }
 

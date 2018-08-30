@@ -19,7 +19,7 @@ class HotelBooking() {
 
   @AggregateIdentifier
   private lateinit var hotelName: String
-  private val reserved = mutableMapOf<String, Interval>()
+  private val reserved = mutableMapOf<String, Pair<Interval, String>>()
 
   @CommandHandler
   constructor(c: CreateHotel) : this() {
@@ -28,7 +28,7 @@ class HotelBooking() {
 
   @CommandHandler
   fun handle(c: BookHotel) {
-    if (reserved.values.filter { it.overlaps(interval(c.arrival, c.departure)) }.count() != 0) {
+    if (reserved.values.filter { it.first.overlaps(interval(c.arrival, c.departure)) }.count() != 0) {
       throw HotelReservationNotPossibleException("No rooms free")
     }
     apply(HotelBooked(
@@ -43,12 +43,14 @@ class HotelBooking() {
 
   @CommandHandler
   fun handle(c: CancelHotel) {
-    if (reserved.containsKey(c.hotelConfirmationCode)) {
+    if (reserved.containsKey(c.reservationId)) {
+      val reservation = reserved[c.reservationId]!!.first
+      val confirmationCode = reserved[c.reservationId]!!.second
       apply(
         HotelCancelled(
-          arrival = start(reserved[c.hotelConfirmationCode]!!),
-          departure = end(reserved[c.hotelConfirmationCode]!!),
-          hotelConfirmationCode = c.hotelConfirmationCode,
+          arrival = start(reservation),
+          departure = end(reservation),
+          hotelConfirmationCode = confirmationCode,
           reservationId = c.reservationId
         )
       )
@@ -62,6 +64,6 @@ class HotelBooking() {
 
   @EventSourcingHandler
   fun on(e: HotelBooked) {
-    reserved.put(e.hotelConfirmationCode, interval(e.arrival, e.departure))
+    reserved.put(e.reservationId, interval(e.arrival, e.departure) to e.hotelConfirmationCode)
   }
 }

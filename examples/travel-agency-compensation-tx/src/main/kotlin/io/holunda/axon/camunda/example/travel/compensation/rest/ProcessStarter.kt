@@ -12,10 +12,25 @@ import java.time.LocalDate
 @RestController
 class ProcessStarter(private val runtime: RuntimeService) {
 
-  @PostMapping("/travel")
-  fun startTravelMessageBasedWithCompensation(): ResponseEntity<String> {
+  @PostMapping("/travel/lh123")
+  fun startPiggyLH123(): ResponseEntity<String> {
 
     val reservation = Reservation("piggy", LocalDate.now(), LocalDate.now().plusDays(2), "Astoria", "LH-123")
+
+    val instanceId = runtime
+      .startProcessInstanceByKey(MessageBasedTravelProcessWithCompensation.KEY,
+        Variables.createVariables().putValue(MessageBasedTravelProcessWithCompensation.Variables.RESERVATION, reservation)
+      )
+      .processInstanceId
+
+    return ResponseEntity.ok(instanceId)
+  }
+
+
+  @PostMapping("/travel/lh124")
+  fun startKermit124(): ResponseEntity<String> {
+
+    val reservation = Reservation("kermit", LocalDate.now(), LocalDate.now().plusDays(2), "Four Seasons", "LH-124")
 
     val instanceId = runtime
       .startProcessInstanceByKey(MessageBasedTravelProcessWithCompensation.KEY,

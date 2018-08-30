@@ -23,7 +23,6 @@ data class BookHotel(
 data class CancelHotel(
   @TargetAggregateIdentifier
   val hotelName: String,
-  val hotelConfirmationCode: String,
   val reservationId: String = UUID.randomUUID().toString()
 )
 

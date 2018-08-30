@@ -57,7 +57,6 @@ open class TravelAgencyConfiguration(private val gateway: CommandGateway) {
           MessageBasedTravelProcessWithCompensation.Messages.CANCEL_HOTEL ->
             CancelHotel(
               hotelName = reservation.hotel,
-              hotelConfirmationCode = execution.getVariable(MessageBasedTravelProcessWithCompensation.Variables.HOTEL_CONFIRMATION_CODE) as String,
               reservationId = reservation.id)
           MessageBasedTravelProcessWithCompensation.Messages.BOOK_FLIGHT ->
             BookFlight(

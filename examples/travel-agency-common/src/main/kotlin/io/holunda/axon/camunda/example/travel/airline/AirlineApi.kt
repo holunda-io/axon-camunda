@@ -8,6 +8,10 @@ import java.util.*
 typealias Airport = String
 typealias FlightNumber = String
 
+/**
+ * Commands
+ */
+
 data class CreateFlight(
   @TargetAggregateIdentifier
   val flightNumber: FlightNumber,
@@ -24,6 +28,18 @@ data class BookFlight(
   val guestName: String,
   val reservationId: String = UUID.randomUUID().toString()
 )
+
+data class CancelFlight(
+  @TargetAggregateIdentifier
+  val flightNumber: FlightNumber,
+  val guestName: String,
+  val reservationId: String = UUID.randomUUID().toString()
+)
+
+
+/**
+ * Events
+ */
 
 data class FlightCreated(
   val flightNumber: FlightNumber,
@@ -43,6 +59,16 @@ data class FlightBooked(
   @EventCorrelationId
   val reservationId: String
 )
+
+data class FlightCancelled(
+  val flightNumber: FlightNumber,
+  val guestName: String,
+  val arrival: LocalDateTime,
+  val departure: LocalDateTime,
+  @EventCorrelationId
+  val reservationId: String
+)
+
 
 data class FlightBookingNotPossibleException(override val message: String) : Exception(message)
 data class NoSeatsAvailable(val flightNumber: FlightNumber) : Exception("No seats in $flightNumber available.")
