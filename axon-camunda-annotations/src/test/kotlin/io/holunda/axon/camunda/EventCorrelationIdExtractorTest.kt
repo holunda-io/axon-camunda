@@ -13,7 +13,6 @@ class EventCorrelationIdExtractorTest {
   }
 
   @Test
-  @Disabled // FIXME
   fun `should find one`() {
     assertThat(extractCorrelationId(EventWithOneCorrelationId("foo"))).isNotNull
   }
@@ -26,7 +25,6 @@ class EventCorrelationIdExtractorTest {
   }
 
   @Test
-  @Disabled // FIXME
   fun `should find one from base class`() {
     val event = BaseEvent()
     event.value = "foo"

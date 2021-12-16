@@ -1,6 +1,7 @@
 package io.holunda.axon.camunda.example.travel.compensation
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.holunda.axon.camunda.example.travel.minimal.TravelAgencyApplication
 import io.holunda.axon.camunda.example.travel.minimal.process.MessageBasedTravelProcess
 import io.holunda.spring.io.holunda.axon.camunda.example.process.Reservation
 import org.assertj.core.api.Assertions
@@ -17,7 +18,7 @@ import java.time.LocalDate
 import java.util.*
 
 @RunWith(SpringRunner::class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = [TravelAgencyApplication::class], webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("itest")
 class ProcessITest {
 

@@ -16,5 +16,7 @@ spring:
       WRITE_DATES_AS_TIMESTAMPS: false
 
 axon:
+  axonserver:
+    enabled: false
   camunda:
     send-signals: false

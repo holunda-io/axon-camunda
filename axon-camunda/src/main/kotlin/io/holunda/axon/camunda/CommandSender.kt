@@ -34,8 +34,9 @@ class MessageCommandSender(
 
 internal fun sendCommand(gateway: CommandGateway, execution: DelegateExecution, registry: CamundaAxonEventCommandFactoryRegistry, messageName: String) {
   val factory = registry.commandFactory(execution.processDefinitionKey())
-
-  val result = gateway.send<Any>(factory.command(messageName, execution))
+  val command = factory.command(messageName, execution)
+  CommandSender.logger.info { "Sending command: $command" }
+  val result = gateway.send<Any>(command)
   try {
     result.get()
   } catch (e: ExecutionException) {
