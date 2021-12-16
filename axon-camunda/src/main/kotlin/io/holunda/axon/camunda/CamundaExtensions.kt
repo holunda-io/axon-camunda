@@ -1,5 +1,6 @@
 package io.holunda.axon.camunda
 
+import io.holunda.axon.camunda.ELEMENTTEMPLATES.messageAttribute
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.model.bpmn.instance.MessageEventDefinition
 import org.camunda.bpm.model.bpmn.instance.ThrowEvent
@@ -7,10 +8,16 @@ import org.camunda.bpm.model.bpmn.instance.ThrowEvent
 object ELEMENTTEMPLATES {
   const val messageAttribute = "message"
 }
+
 /**
  * Extension function for process execution to extract message name.
  */
 fun DelegateExecution.messageName(): String {
+
+  if (this.hasVariable(messageAttribute)) {
+    return this.getVariable(messageAttribute) as String
+  }
+
   // rebind to allow smart cast
   val modelInstance = bpmnModelElementInstance
 
@@ -28,13 +35,12 @@ fun DelegateExecution.messageName(): String {
     ?.childElements?.find { it.localName == "property" && it.hasAttribute("name") && it.getAttribute("name") == ELEMENTTEMPLATES.messageAttribute }
     ?.getAttribute("value")
     ?.trim()
-  if (property != null && !property.isEmpty()) {
+  if (property != null && property.isNotEmpty()) {
     return property
   }
 
   throw IllegalArgumentException("Message must be set (use BPMN throw event or Element Template for Axon Command).")
 }
-
 
 
 /**

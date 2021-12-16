@@ -1,7 +1,7 @@
 package io.holunda.axon.camunda.example.travel.hotel
 
 import io.holunda.axon.camunda.EventCorrelationId
-import org.axonframework.commandhandling.TargetAggregateIdentifier
+import org.axonframework.modelling.command.TargetAggregateIdentifier
 import java.time.LocalDate
 import java.util.*
 
@@ -13,10 +13,10 @@ data class CreateHotel(
 
 data class BookHotel(
   val arrival: LocalDate,
-  val departure: LocalDate,
-  val guestName: String,
   @TargetAggregateIdentifier
   val hotelName: String,
+  val departure: LocalDate,
+  val guestName: String,
   val reservationId: String = UUID.randomUUID().toString()
 )
 
@@ -32,22 +32,21 @@ data class HotelCreated(
   val city: String
 )
 
-
 data class HotelBooked(
+  @EventCorrelationId
+  val reservationId: String,
   val arrival: LocalDate,
   val departure: LocalDate,
   val guestName: String,
   val hotelName: String,
-  @EventCorrelationId
-  val reservationId: String,
   val hotelConfirmationCode: String
 )
 
 data class HotelCancelled(
-  val arrival: LocalDate,
-  val departure: LocalDate,
   @EventCorrelationId
   val reservationId: String,
+  val arrival: LocalDate,
+  val departure: LocalDate,
   val hotelConfirmationCode: String
 )
 

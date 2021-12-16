@@ -1,0 +1,44 @@
+[
+  {
+    "$schema": "https://unpkg.com/@camunda/element-templates-json-schema@0.2.0/resources/schema.json",
+    "name": "Axon Command Sender",
+    "id": "holunda.axon-command-sender",
+    "description": "Service Task to send Axon commands",
+    "version": 1,
+    "appliesTo": [
+      "bpmn:SendTask"
+    ],
+    "properties": [
+      {
+        "label": "Message Name",
+        "type": "String",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "message"
+        },
+        "constraints": {
+          "notEmpty": true
+        }
+      },
+      {
+        "label": "Implementation Type",
+        "type": "String",
+        "value": "${commandSender}",
+        "editable": false,
+        "binding": {
+          "type": "property",
+          "name": "camunda:delegateExpression"
+        }
+      },
+      {
+        "label": "Asynchronous Before",
+        "type": "Boolean",
+        "value": "true",
+        "binding": {
+          "type": "property",
+          "name": "camunda:asyncBefore"
+        }
+      }
+    ]
+  }
+]

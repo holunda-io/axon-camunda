@@ -11,10 +11,14 @@ camunda:
       last-name: Administratos
     history-level: activity
 spring:
+  jpa:
+    open-in-view: false
   jackson:
     serialization:
       WRITE_DATES_AS_TIMESTAMPS: false
 
 axon:
+  axonserver:
+    enabled: false
   camunda:
     send-signals: false

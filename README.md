@@ -16,19 +16,19 @@ of orchestration between different Axon Aggregates.
 
 ## Basic concept
 
-AxonFramework is a fast-emerging and very promissing framework for building self-contained systems in Java. In doing so, 
+AxonFramework is a fast-emerging and very promising framework for building self-contained systems in Java. In doing so, 
 it allows for an effective implementation of the CQRS ES architecture style and de-couples architectural design from 
 strategy of system distribution and deployment. 
 
-It promotes the implementation of domain logic using Aggregates which receive Commannds for changing state and 
+It promotes the implementation of domain logic using Aggregates which receive Commands for changing state and 
 emit Events to indicate the changes. If a state change of several coordinated Aggregates should be reached
 a concept of Saga is used. Sagas are reacting on Events and can send out Commands to drive the state change of 
 several Aggregates.
 
-Sagas are usualy programmed in Java as described in AxonFramework documentation. This approach lacks 
+Sagas are usually programmed in Java as described in AxonFramework documentation. This approach lacks 
 clear visual representation which is so crucial in complex business scenarios. 
 
-Our propose is to use BPMN 2.x fo implementation of Sagas in Axon. This library allows for easy implementation
+Our proposal is to use BPMN 2.x fo implementation of Sagas in Axon. This library allows for easy implementation
 of BPMN based Sagas and uses Camunda BPM engine for execution of those.
 
 
@@ -178,14 +178,31 @@ The corresponding `CamundaAxonEventFactory` looks like the following:
   
 ## ToDos 
 
-- Implement General Singal catching process for setting process variables. 
+- Implement General Signal catching process for setting process variables. 
 - Support modeller templates
 - Finish example (add airline, add car booking), add compensation
 - Write more lib tests
 - Write more docs
 - More ITests 
-- Further concept for error mapping, what is the pattern to catch them?
+- Better concept for error mapping, what is the pattern to catch them?
 
 ## Bugs
 
+
+## Running order
+
+
+- Tx start
+- delegate call start
+- gateway command send -> future
+- event fired
+- event received | or not
+- create receive job
+- future.get -> result | exception -> BPMN Error
+- delegate call end 
+- subscription job create
+- Tx end
+- Tx start (job)
+- correlate
+- Tx end
 

@@ -27,4 +27,5 @@ private fun extract(instance: Any, annotationClass: Class<out Annotation>): List
         .filter { it.annotations.filter { it.annotationClass.java == annotationClass }.isNotEmpty() }
         .map { it.invoke(instance) as Any })
     .toList()
+    .filterNotNull()
 

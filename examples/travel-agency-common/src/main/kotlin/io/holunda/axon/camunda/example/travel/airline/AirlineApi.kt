@@ -1,7 +1,7 @@
 package io.holunda.axon.camunda.example.travel.airline
 
 import io.holunda.axon.camunda.EventCorrelationId
-import org.axonframework.commandhandling.TargetAggregateIdentifier
+import org.axonframework.modelling.command.TargetAggregateIdentifier
 import java.time.LocalDateTime
 import java.util.*
 
@@ -51,22 +51,22 @@ data class FlightCreated(
 )
 
 data class FlightBooked(
+  @EventCorrelationId
+  val reservationId: String,
   val flightNumber: FlightNumber,
   val guestName: String,
   val arrival: LocalDateTime,
   val departure: LocalDateTime,
-  val ticketNumber: String,
-  @EventCorrelationId
-  val reservationId: String
+  val ticketNumber: String
 )
 
 data class FlightCancelled(
+  @EventCorrelationId
+  val reservationId: String,
   val flightNumber: FlightNumber,
   val guestName: String,
   val arrival: LocalDateTime,
-  val departure: LocalDateTime,
-  @EventCorrelationId
-  val reservationId: String
+  val departure: LocalDateTime
 )
 
 

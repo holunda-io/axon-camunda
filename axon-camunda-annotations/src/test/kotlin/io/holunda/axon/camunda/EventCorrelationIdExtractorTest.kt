@@ -1,15 +1,11 @@
 package io.holunda.axon.camunda
 
+import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Ignore
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.ExpectedException
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 
 class EventCorrelationIdExtractorTest {
-
-  @get: Rule
-  val thrown = ExpectedException.none()
 
   @Test
   fun `should find none`() {
@@ -23,9 +19,9 @@ class EventCorrelationIdExtractorTest {
 
   @Test
   fun `should find multiple`() {
-    thrown.expectMessage("Found more than one fields marked with @EventCorrelationId annotation.")
-    thrown.expect(IllegalArgumentException::class.java)
-    extractCorrelationId(EventWithTwoCorrelationIds("foo", "bar"))
+    Assertions.assertThatThrownBy { extractCorrelationId(EventWithTwoCorrelationIds("foo", "bar")) }
+      .withFailMessage("Found more than one fields marked with @EventCorrelationId annotation.")
+      .isExactlyInstanceOf(IllegalArgumentException::class.java)
   }
 
   @Test
@@ -36,7 +32,7 @@ class EventCorrelationIdExtractorTest {
   }
 
   // FIXME support inheritance
-  @Ignore
+  @Disabled
   @Test
   fun `should find one from super class`() {
     val event = ExtendedEvent()
@@ -46,15 +42,16 @@ class EventCorrelationIdExtractorTest {
   }
 
   // FIXME support inheritance
-  @Ignore
+  @Disabled
   @Test
   fun `should find multiple from base and super class`() {
-    thrown.expectMessage("Found more than one fields marked with @EventCorrelationId annotation.")
-    thrown.expect(IllegalArgumentException::class.java)
     val event = OverridingEvent()
     event.another = "another"
     event.value = "value"
-    assertThat(extractCorrelationId(event)).isNull()
+
+    Assertions.assertThatThrownBy { extractCorrelationId(event) }
+      .hasCauseInstanceOf(IllegalArgumentException::class.java)
+      .withFailMessage("Found more than one fields marked with @EventCorrelationId annotation.")
   }
 
 }
