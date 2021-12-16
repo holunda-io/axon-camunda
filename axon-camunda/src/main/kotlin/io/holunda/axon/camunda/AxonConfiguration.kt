@@ -1,17 +1,10 @@
 package io.holunda.axon.camunda
 
-import mu.KLogging
 import org.axonframework.commandhandling.AsynchronousCommandBus
 import org.axonframework.common.transaction.TransactionManager
-import org.axonframework.config.EventHandlingConfiguration
-import org.axonframework.eventhandling.EventListener
-import org.axonframework.eventhandling.EventMessage
 import org.axonframework.monitoring.NoOpMessageMonitor
-import org.camunda.bpm.engine.RuntimeService
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.*
-import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.EnableTransactionManagement
 import java.util.concurrent.Executors
 

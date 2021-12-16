@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.0.0.RELEASE</version>
+    <version>2.6.1</version>
     <relativePath/>
   </parent>
 
@@ -27,20 +27,20 @@
     <dockerfile.skip>true</dockerfile.skip>
 
     <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
-    <kotlin.version>1.2.60</kotlin.version>
+    <kotlin.version>1.6.10</kotlin.version>
 
-    <springboot.version>2.0.1.RELEASE</springboot.version>
+    <springboot.version>2.5.6</springboot.version>
 
     <kotlin-logging.version>1.4.6</kotlin-logging.version>
-    <axon.version>3.2</axon.version>
+    <axon.version>4.2.1</axon.version>
     <spring-validator.version>1.1.0</spring-validator.version>
 
     <camunda-ee>false</camunda-ee>
-    <camunda.version>7.9.0</camunda.version>
-    <camunda.version.ee>7.9.2-ee</camunda.version.ee>
+    <camunda.version>7.16.0</camunda.version>
+    <camunda.version.ee>7.16.0-ee</camunda.version.ee>
+    <camunda-spring-boot.version>${camunda.version}</camunda-spring-boot.version>
 
     <version.camunda.spin>1.5.1</version.camunda.spin>
-    <camunda-spring-boot.version>3.0.0</camunda-spring-boot.version>
     <jackson.version>2.9.5</jackson.version>
 
   </properties>
