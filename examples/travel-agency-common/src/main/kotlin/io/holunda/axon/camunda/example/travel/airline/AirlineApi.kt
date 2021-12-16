@@ -1,7 +1,7 @@
 package io.holunda.axon.camunda.example.travel.airline
 
 import io.holunda.axon.camunda.EventCorrelationId
-import org.axonframework.commandhandling.TargetAggregateIdentifier
+import org.axonframework.modelling.command.TargetAggregateIdentifier
 import java.time.LocalDateTime
 import java.util.*
 

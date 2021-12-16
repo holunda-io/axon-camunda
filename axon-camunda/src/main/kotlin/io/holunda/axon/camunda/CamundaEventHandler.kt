@@ -1,8 +1,8 @@
 package io.holunda.axon.camunda
 
 import mu.KLogging
-import org.axonframework.eventhandling.EventListener
 import org.axonframework.eventhandling.EventMessage
+import org.axonframework.eventhandling.EventMessageHandler
 import org.camunda.bpm.engine.RuntimeService
 import org.springframework.stereotype.Component
 
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component
 class CamundaEventHandler(
   private val runtime: RuntimeService,
   private val registry: CamundaAxonEventCommandFactoryRegistry,
-  private val axonCamundaProperties: AxonCamundaProperties) : EventListener {
+  private val axonCamundaProperties: AxonCamundaProperties) : EventMessageHandler {
 
   companion object : KLogging()
 

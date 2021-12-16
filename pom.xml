@@ -32,7 +32,7 @@
     <springboot.version>2.5.6</springboot.version>
 
     <kotlin-logging.version>1.4.6</kotlin-logging.version>
-    <axon.version>4.2.1</axon.version>
+    <axon.version>4.5.5</axon.version>
     <spring-validator.version>1.1.0</spring-validator.version>
 
     <camunda-ee>false</camunda-ee>
@@ -55,6 +55,16 @@
         <scope>import</scope>
         <type>pom</type>
       </dependency>
+
+      <!-- Axon -->
+      <dependency>
+        <groupId>org.axonframework</groupId>
+        <artifactId>axon-bom</artifactId>
+        <version>${axon.version}</version>
+        <scope>import</scope>
+        <type>pom</type>
+      </dependency>
+
       <dependency>
         <groupId>org.codehaus.groovy</groupId>
         <artifactId>groovy-all</artifactId>
