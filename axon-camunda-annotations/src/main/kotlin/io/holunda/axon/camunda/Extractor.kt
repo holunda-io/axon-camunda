@@ -16,7 +16,7 @@ fun extractCorrelationId(instance: Any): Any? {
 
 private fun extract(instance: Any, annotationClass: Class<out Annotation>): List<Any> =
   instance.javaClass.declaredFields
-    .filter { it.annotations.filter { it.javaClass == annotationClass }.isNotEmpty() }
+    .filter { it.annotations.any { annotation -> annotation.javaClass == annotationClass } }
     .map { it.get(instance) }
     .union(
       instance.javaClass.declaredMethods
@@ -24,7 +24,7 @@ private fun extract(instance: Any, annotationClass: Class<out Annotation>): List
         .map { it.invoke(instance) })
     .union(
       instance.javaClass.kotlin.declaredMemberProperties
-        .filter { it.annotations.filter { it.annotationClass.java == annotationClass }.isNotEmpty() }
+        .filter { it.annotations.any { annotation -> annotation.annotationClass.java == annotationClass } }
         .map { it.invoke(instance) as Any })
     .toList()
     .filterNotNull()

@@ -1,5 +1,7 @@
-package io.holunda.axon.camunda
+package io.holunda.axon.camunda.process
 
+import io.holunda.axon.camunda.egress.CamundaCommandSender
+import io.holunda.axon.camunda.messageName
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.engine.delegate.JavaDelegate
 import org.springframework.stereotype.Component

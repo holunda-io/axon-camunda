@@ -11,6 +11,10 @@
   <artifactId>axon-camunda-examples</artifactId>
   <packaging>pom</packaging>
 
+  <properties>
+      <deploy.skip>true</deploy.skip>
+  </properties>
+
   <modules>
     <module>travel-agency-common</module>
     <module>travel-agency-minimal</module>
@@ -27,19 +31,6 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-
-  <build>
-    <plugins>
-      <!-- Don't release or deploy examples ever -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-deploy-plugin</artifactId>
-        <configuration>
-          <skip>true</skip>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 
   <profiles>
     <profile>

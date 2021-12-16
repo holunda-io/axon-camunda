@@ -1,5 +1,7 @@
-package io.holunda.axon.camunda
+package io.holunda.axon.camunda.egress
 
+import io.holunda.axon.camunda.config.CamundaAxonEventCommandFactoryRegistry
+import io.holunda.axon.camunda.processDefinitionKey
 import mu.KLogging
 import org.axonframework.commandhandling.gateway.CommandGateway
 import org.camunda.bpm.engine.delegate.DelegateExecution
@@ -14,17 +16,18 @@ class CamundaCommandSender(
 
   companion object: KLogging()
 
-  fun sendCommand(execution: DelegateExecution, messageName: String) {
+  internal fun sendCommand(execution: DelegateExecution, messageName: String): Any? {
 
-    val factory = registry.commandFactory(execution.processDefinitionKey())
+    val factory = registry.getFactory(execution.processDefinitionKey())
     val command = factory.command(messageName, execution)
 
-    logger.info { "Sending command: $command" }
-    val result = gateway.send<Any>(command)
-    try {
-      result.get()
+    logger.debug { "Sending command: $command" }
+
+    return try {
+      gateway.sendAndWait<Any?>(command)
     } catch (e: ExecutionException) {
-      val error = factory.error(e.cause!!) ?: e.cause!!
+      val innerCause = e.cause!!
+      val error = factory.error(innerCause) ?: innerCause
       logger.error { "Error sending command $messageName. Throwing $error." }
       throw error
     }

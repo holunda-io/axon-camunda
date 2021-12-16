@@ -1,19 +1,18 @@
 package io.holunda.axon.camunda
 
-import io.holunda.axon.camunda.ELEMENTTEMPLATES.messageAttribute
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.model.bpmn.instance.MessageEventDefinition
 import org.camunda.bpm.model.bpmn.instance.ThrowEvent
 
-object ELEMENTTEMPLATES {
-  const val messageAttribute = "message"
-}
+const val messageAttribute = "message"
+
 
 /**
  * Extension function for process execution to extract message name.
  */
 fun DelegateExecution.messageName(): String {
 
+  // try variable first
   if (this.hasVariable(messageAttribute)) {
     return this.getVariable(messageAttribute) as String
   }
@@ -32,7 +31,7 @@ fun DelegateExecution.messageName(): String {
   // try extension element
   val property = modelInstance.domElement.childElements.find { it.localName == "extensionElements" }
     ?.childElements?.find { it.localName == "properties" }
-    ?.childElements?.find { it.localName == "property" && it.hasAttribute("name") && it.getAttribute("name") == ELEMENTTEMPLATES.messageAttribute }
+    ?.childElements?.find { it.localName == "property" && it.hasAttribute("name") && it.getAttribute("name") == messageAttribute }
     ?.getAttribute("value")
     ?.trim()
   if (property != null && property.isNotEmpty()) {
@@ -47,5 +46,10 @@ fun DelegateExecution.messageName(): String {
  * Extension function for process execution to extract process definition key.
  */
 fun DelegateExecution.processDefinitionKey(): String {
-  return processDefinitionId.split(":")[0]
+  return this
+    .processEngineServices
+    .repositoryService
+    .createProcessDefinitionQuery()
+    .processDefinitionId(processDefinitionId)
+    .singleResult().key
 }

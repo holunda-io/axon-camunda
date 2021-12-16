@@ -1,8 +1,8 @@
 package io.holunda.axon.camunda.example.travel.minimal.process
 
-import io.holunda.axon.camunda.AbstractEventCommandFactory
-import io.holunda.axon.camunda.CamundaAxonEventCommandFactoryRegistry
-import io.holunda.axon.camunda.CamundaEvent
+import io.holunda.axon.camunda.config.AbstractEventCommandFactory
+import io.holunda.axon.camunda.config.CamundaAxonEventCommandFactoryRegistry
+import io.holunda.axon.camunda.config.CamundaEvent
 import io.holunda.axon.camunda.example.travel.airline.BookFlight
 import io.holunda.axon.camunda.example.travel.airline.CreateFlight
 import io.holunda.axon.camunda.example.travel.airline.FlightBooked
@@ -24,10 +24,10 @@ import java.time.LocalDateTime
 
 
 @Configuration
-open class TravelAgencyConfiguration(private val gateway: CommandGateway) {
+class TravelAgencyConfiguration {
 
   @Bean
-  fun init() = object : DefaultSmartLifecycle(1000) {
+  fun init(gateway: CommandGateway) = object : DefaultSmartLifecycle(1000) {
     override fun onStart() {
 
       val now = LocalDateTime.now();
@@ -58,12 +58,14 @@ open class TravelAgencyConfiguration(private val gateway: CommandGateway) {
               departure = reservation.to,
               guestName = reservation.name,
               hotelName = reservation.hotel,
-              reservationId = reservation.id)
+              reservationId = reservation.id
+            )
           MessageBasedTravelProcess.Messages.BOOK_FLIGHT ->
             BookFlight(
               flightNumber = reservation.flightNumber,
               guestName = reservation.name,
-              reservationId = reservation.id)
+              reservationId = reservation.id
+            )
           else -> super.command(messageName, execution)
         }
       }
@@ -78,13 +80,15 @@ open class TravelAgencyConfiguration(private val gateway: CommandGateway) {
             CamundaEvent(
               name = MessageBasedTravelProcess.Messages.HOTEL_BOOKED,
               variables = mapOf<String, Any>(MessageBasedTravelProcess.Variables.HOTEL_CONFIRMATION_CODE to payload.hotelConfirmationCode),
-              correlationVariableName = MessageBasedTravelProcess.Variables.RESERVATION_ID)
+              correlationVariableName = MessageBasedTravelProcess.Variables.RESERVATION_ID
+            )
 
           is FlightBooked ->
             CamundaEvent(
               name = MessageBasedTravelProcess.Messages.FLIGHT_BOOKED,
               variables = mapOf<String, Any>(MessageBasedTravelProcess.Variables.TICKET_NUMBER to payload.ticketNumber),
-              correlationVariableName = MessageBasedTravelProcess.Variables.RESERVATION_ID)
+              correlationVariableName = MessageBasedTravelProcess.Variables.RESERVATION_ID
+            )
           else -> null
         }
 

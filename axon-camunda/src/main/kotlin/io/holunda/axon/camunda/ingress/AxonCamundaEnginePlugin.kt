@@ -1,4 +1,4 @@
-package io.holunda.axon.camunda.job
+package io.holunda.axon.camunda.ingress
 
 import mu.KLogging
 import org.camunda.bpm.engine.impl.cfg.AbstractProcessEnginePlugin

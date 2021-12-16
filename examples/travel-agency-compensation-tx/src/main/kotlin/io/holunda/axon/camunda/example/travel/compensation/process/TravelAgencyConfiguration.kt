@@ -1,8 +1,8 @@
 package io.holunda.axon.camunda.example.travel.compensation.process
 
-import io.holunda.axon.camunda.AbstractEventCommandFactory
-import io.holunda.axon.camunda.CamundaAxonEventCommandFactoryRegistry
-import io.holunda.axon.camunda.CamundaEvent
+import io.holunda.axon.camunda.config.AbstractEventCommandFactory
+import io.holunda.axon.camunda.config.CamundaAxonEventCommandFactoryRegistry
+import io.holunda.axon.camunda.config.CamundaEvent
 import io.holunda.axon.camunda.example.travel.airline.*
 import io.holunda.axon.camunda.example.travel.hotel.*
 import io.holunda.axon.camunda.spring.DefaultSmartLifecycle

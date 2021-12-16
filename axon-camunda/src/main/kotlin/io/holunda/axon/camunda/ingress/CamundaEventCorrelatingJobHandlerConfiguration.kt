@@ -1,4 +1,4 @@
-package io.holunda.axon.camunda.job
+package io.holunda.axon.camunda.ingress
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -7,10 +7,10 @@ import org.camunda.bpm.engine.impl.jobexecutor.JobHandlerConfiguration
 
 data class CamundaEventCorrelatingJobHandlerConfiguration(
   val processDefinitionKey: String,
-  val correlationId: Any,
   val eventName: String,
-  val correlationVariableName: String,
   val variables: Map<String, Any>,
+  val correlationVariableName: String?,
+  val correlationId: Any?,
 ) : JobHandlerConfiguration {
 
   companion object {

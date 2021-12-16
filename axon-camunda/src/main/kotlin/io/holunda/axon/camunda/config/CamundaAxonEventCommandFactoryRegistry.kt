@@ -1,4 +1,4 @@
-package io.holunda.axon.camunda
+package io.holunda.axon.camunda.config
 
 import org.springframework.stereotype.Component
 
@@ -11,16 +11,15 @@ class CamundaAxonEventCommandFactoryRegistry {
   private val factories: MutableMap<String, AbstractEventCommandFactory> = mutableMapOf()
 
   fun register(factory: AbstractEventCommandFactory) {
-    factories.put(factory.processDefinitionKey, factory)
+    factories[factory.processDefinitionKey] = factory
   }
 
-  fun commandFactory(processDefinitionKey: String): AbstractEventCommandFactory =
+  fun getFactory(processDefinitionKey: String): AbstractEventCommandFactory =
     if (factories.containsKey(processDefinitionKey)) {
-      factories[processDefinitionKey]!!
+      factories.getValue(processDefinitionKey)
     } else {
       throw IllegalArgumentException("No factory for process definition key $processDefinitionKey found.")
     }
 
-  fun factories() = factories.values
   fun processDefinitions() = factories.keys
 }
