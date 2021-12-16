@@ -1,16 +1,22 @@
 package io.holunda.axon.camunda
 
+import io.holunda.axon.camunda.job.CamundaEventCorrelatingJobHandler.Companion.TYPE
+import io.holunda.axon.camunda.job.CamundaEventCorrelatingJobHandlerConfiguration
 import mu.KLogging
 import org.axonframework.eventhandling.EventMessage
 import org.axonframework.eventhandling.EventMessageHandler
 import org.camunda.bpm.engine.RuntimeService
+import org.camunda.bpm.engine.impl.cfg.ProcessEngineConfigurationImpl
+import org.camunda.bpm.engine.impl.persistence.entity.MessageEntity
 import org.springframework.stereotype.Component
 
 @Component
-class CamundaEventHandler(
+class CamundaEventMessageHandler(
   private val runtime: RuntimeService,
   private val registry: CamundaAxonEventCommandFactoryRegistry,
-  private val axonCamundaProperties: AxonCamundaProperties) : EventMessageHandler {
+  private val axonCamundaProperties: AxonCamundaProperties,
+  private val processEngineConfigurationImpl: ProcessEngineConfigurationImpl
+) : EventMessageHandler {
 
   companion object : KLogging()
 
@@ -22,10 +28,10 @@ class CamundaEventHandler(
 
     registry
       .processDefinitions()
-      .map { processDefinitionKey -> processDefinitionKey to registry.commandFactory(processDefinitionKey)  }
+      .map { processDefinitionKey -> processDefinitionKey to registry.commandFactory(processDefinitionKey) }
       .map { (processDefinitionKey, factory) -> processDefinitionKey to factory.event(event.payload, event.metaData) }
       .forEach { (processDefinitionKey, camundaEvent) ->
-        camundaEvent?.let {
+        camundaEvent?.let { camundaEvent ->
 
           if (axonCamundaProperties.sendSignals) {
             // signals for all
@@ -40,22 +46,21 @@ class CamundaEventHandler(
 
           if (camundaEvent.correlationVariableName != null) {
 
-            if (runtime
-                .createProcessInstanceQuery()
-                .processDefinitionKey(processDefinitionKey)
-                .variableValueEquals(camundaEvent.correlationVariableName, correlationId)
-                .count() > 0) {
-              logger.info { "Correlation id found $correlationId, correlating a message using it with instance of $processDefinitionKey." }
-              runtime
-                .createMessageCorrelation(camundaEvent.name)
-                .processInstanceVariablesEqual(mutableMapOf<String, Any>(camundaEvent.correlationVariableName to correlationId))
-                .setVariables(camundaEvent.variables.toMap())
-                .correlate()
-
-            } else {
-              logger.info { "Skipping correlation of id $correlationId, no instances found for $processDefinitionKey" }
+            processEngineConfigurationImpl.commandExecutorTxRequired.execute {
+              it.jobManager.send(
+                MessageEntity()
+                  .apply {
+                    this.jobHandlerConfiguration = CamundaEventCorrelatingJobHandlerConfiguration(
+                      processDefinitionKey = processDefinitionKey,
+                      correlationId = correlationId,
+                      eventName = camundaEvent.name,
+                      correlationVariableName = camundaEvent.correlationVariableName,
+                      variables = camundaEvent.variables
+                    )
+                    this.jobHandlerType = TYPE
+                  }
+              )
             }
-
           }
         }
       }

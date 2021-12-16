@@ -189,3 +189,20 @@ The corresponding `CamundaAxonEventFactory` looks like the following:
 ## Bugs
 
 
+## Running order
+
+
+- Tx start
+- delegate call start
+- gateway command send -> future
+- event fired
+- event received | or not
+- create receive job
+- future.get -> result | exception -> BPMN Error
+- delegate call end 
+- subscription job create
+- Tx end
+- Tx start (job)
+- correlate
+- Tx end
+

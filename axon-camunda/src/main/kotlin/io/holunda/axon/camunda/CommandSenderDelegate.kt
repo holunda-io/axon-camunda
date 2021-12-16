@@ -1,49 +1,20 @@
 package io.holunda.axon.camunda
 
-import mu.KLogging
-import org.axonframework.commandhandling.gateway.CommandGateway
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.engine.delegate.JavaDelegate
 import org.springframework.stereotype.Component
-import java.util.concurrent.ExecutionException
 
 /**
  * Delegate to send command to Axon.
  */
 @Component("commandSender")
 class CommandSenderDelegate(
-  private val registry: CamundaAxonEventCommandFactoryRegistry,
-  private val gateway: CommandGateway,
-
+  private val sender: CamundaCommandSender,
 ) : JavaDelegate {
 
-  companion object : KLogging()
-
   override fun execute(execution: DelegateExecution) {
-    sendCommand(gateway, execution, registry, execution.messageName())
-  }
-}
-
-@Component("messageCommandSender")
-class MessageCommandSenderDelegate(
-  private val registry: CamundaAxonEventCommandFactoryRegistry, private val gateway: CommandGateway
-) {
-  fun send(messageName: String, execution: DelegateExecution) {
-    sendCommand(gateway, execution, registry, messageName)
+    sender.sendCommand(execution, execution.messageName())
   }
 }
 
 
-internal fun sendCommand(gateway: CommandGateway, execution: DelegateExecution, registry: CamundaAxonEventCommandFactoryRegistry, messageName: String) {
-  val factory = registry.commandFactory(execution.processDefinitionKey())
-  val command = factory.command(messageName, execution)
-  CommandSenderDelegate.logger.info { "Sending command: $command" }
-  val result = gateway.send<Any>(command)
-  try {
-    result.get()
-  } catch (e: ExecutionException) {
-    val error = factory.error(e.cause!!) ?: e.cause!!
-    CommandSenderDelegate.logger.error { "Error sending command $messageName. Throwing $error." }
-    throw error
-  }
-}

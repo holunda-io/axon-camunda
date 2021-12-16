@@ -1,10 +1,8 @@
 package io.holunda.axon.camunda
 
 import org.axonframework.config.Configurer
-import org.axonframework.eventsourcing.eventstore.inmemory.InMemoryEventStorageEngine
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.properties.EnableConfigurationProperties
-import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
@@ -17,7 +15,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
 class AxonCamundaConfiguration {
 
   @Autowired
-  fun configure(axonConfiguration: Configurer, camundaEventHandler: CamundaEventHandler) {
+  fun configure(axonConfiguration: Configurer, camundaEventHandler: CamundaEventMessageHandler) {
     axonConfiguration.registerEventHandler { camundaEventHandler }
   }
 
