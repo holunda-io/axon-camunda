@@ -10,9 +10,11 @@ import java.util.concurrent.ExecutionException
 /**
  * Delegate to send command to Axon.
  */
-@Component
-class CommandSender(
-  private val registry: CamundaAxonEventCommandFactoryRegistry, private val gateway: CommandGateway
+@Component("commandSender")
+class CommandSenderDelegate(
+  private val registry: CamundaAxonEventCommandFactoryRegistry,
+  private val gateway: CommandGateway,
+
 ) : JavaDelegate {
 
   companion object : KLogging()
@@ -22,8 +24,8 @@ class CommandSender(
   }
 }
 
-@Component
-class MessageCommandSender(
+@Component("messageCommandSender")
+class MessageCommandSenderDelegate(
   private val registry: CamundaAxonEventCommandFactoryRegistry, private val gateway: CommandGateway
 ) {
   fun send(messageName: String, execution: DelegateExecution) {
@@ -35,13 +37,13 @@ class MessageCommandSender(
 internal fun sendCommand(gateway: CommandGateway, execution: DelegateExecution, registry: CamundaAxonEventCommandFactoryRegistry, messageName: String) {
   val factory = registry.commandFactory(execution.processDefinitionKey())
   val command = factory.command(messageName, execution)
-  CommandSender.logger.info { "Sending command: $command" }
+  CommandSenderDelegate.logger.info { "Sending command: $command" }
   val result = gateway.send<Any>(command)
   try {
     result.get()
   } catch (e: ExecutionException) {
     val error = factory.error(e.cause!!) ?: e.cause!!
-    CommandSender.logger.error { "Error sending command $messageName. Throwing $error." }
+    CommandSenderDelegate.logger.error { "Error sending command $messageName. Throwing $error." }
     throw error
   }
 }

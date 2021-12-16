@@ -15,8 +15,11 @@ class CamundaEventHandler(
   companion object : KLogging()
 
   override fun handle(event: EventMessage<*>) {
-    // iterate over all factories and map to signal signal
+    // iterate over all factories and map to signal | message
     // fire every successful mapping as a BPMN signal
+
+    logger.info { "Received Axon event message with payload of type ${event.payloadType.name}" }
+
     registry
       .processDefinitions()
       .map { processDefinitionKey -> processDefinitionKey to registry.commandFactory(processDefinitionKey)  }

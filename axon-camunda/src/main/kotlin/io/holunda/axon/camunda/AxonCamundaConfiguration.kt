@@ -21,9 +21,6 @@ class AxonCamundaConfiguration {
     axonConfiguration.registerEventHandler { camundaEventHandler }
   }
 
-  @Bean
-  fun eventStorageEngine() = InMemoryEventStorageEngine()
-
   //@Bean   FIXME noch nötig?
   //fun commandBus(txManager: TransactionManager) = AsynchronousCommandBus(Executors.newCachedThreadPool(), txManager, NoOpMessageMonitor.INSTANCE)
 
