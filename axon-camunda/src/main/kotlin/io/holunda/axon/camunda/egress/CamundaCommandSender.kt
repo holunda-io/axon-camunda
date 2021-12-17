@@ -8,6 +8,9 @@ import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.springframework.stereotype.Component
 import java.util.concurrent.ExecutionException
 
+/**
+ * Sends commands via command gateway.
+ */
 @Component
 class CamundaCommandSender(
   private val gateway: CommandGateway,
@@ -22,9 +25,9 @@ class CamundaCommandSender(
     val command = factory.command(messageName, execution)
 
     logger.debug { "Sending command: $command" }
-
+    val result = gateway.send<Any?>(command)
     return try {
-      gateway.sendAndWait<Any?>(command)
+      result.get()
     } catch (e: ExecutionException) {
       val innerCause = e.cause!!
       val error = factory.error(innerCause) ?: innerCause

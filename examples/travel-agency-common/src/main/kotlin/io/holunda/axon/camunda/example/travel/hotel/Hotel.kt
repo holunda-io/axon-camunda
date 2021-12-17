@@ -28,7 +28,7 @@ class HotelBooking() {
 
   @CommandHandler
   fun handle(c: BookHotel) {
-    if (reserved.values.filter { it.first.overlaps(interval(c.arrival, c.departure)) }.count() != 0) {
+    if (reserved.values.filter { it.first.overlaps(interval(c.arrival, c.departure)) }.isNotEmpty()) {
       throw HotelReservationNotPossibleException("No rooms free")
     }
     apply(HotelBooked(
@@ -64,6 +64,6 @@ class HotelBooking() {
 
   @EventSourcingHandler
   fun on(e: HotelBooked) {
-    reserved.put(e.reservationId, interval(e.arrival, e.departure) to e.hotelConfirmationCode)
+    reserved[e.reservationId] = interval(e.arrival, e.departure) to e.hotelConfirmationCode
   }
 }

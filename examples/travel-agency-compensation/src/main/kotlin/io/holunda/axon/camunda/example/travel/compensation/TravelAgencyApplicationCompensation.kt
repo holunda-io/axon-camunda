@@ -9,14 +9,14 @@ import org.springframework.context.annotation.Bean
 import org.springframework.transaction.annotation.EnableTransactionManagement
 
 fun main(args: Array<String>) {
-  SpringApplication.run(TravelAgencyApplication::class.java, *args)
+  SpringApplication.run(TravelAgencyApplicationCompensation::class.java, *args)
 }
 
 @SpringBootApplication
 @EnableProcessApplication
 @EnableAxonCamunda
 @EnableTransactionManagement
-class TravelAgencyApplication {
+class TravelAgencyApplicationCompensation {
 
   @Bean
   fun eventStorageEngine() = InMemoryEventStorageEngine()

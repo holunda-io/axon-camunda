@@ -6,10 +6,6 @@ object MessageBasedTravelProcessWithCompensation {
   const val BPMN = "message-based-travel-compensation-tx.bpmn"
 
   object Variables {
-    const val RESERVATION = "reservation"
-    const val RESERVATION_ID = "reservationId"
-    const val HOTEL_CONFIRMATION_CODE = "hotelConfirmationCode"
-    const val TICKET_NUMBER = "flightTicketNumber"
     const val PAYED = "payed"
   }
 

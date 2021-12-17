@@ -1,8 +1,9 @@
 package io.holunda.axon.camunda.example.travel.compensation
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.holunda.axon.camunda.example.travel.minimal.TravelAgencyApplicationMinimal
 import io.holunda.axon.camunda.example.travel.process.payload.Reservation
-import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -13,7 +14,7 @@ import java.time.LocalDate
 import java.util.*
 
 @RunWith(SpringRunner::class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = [TravelAgencyApplicationMinimal::class], webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("itest")
 class SerializationITest {
 
@@ -34,6 +35,6 @@ class SerializationITest {
     val serialized = objectMapper.writeValueAsString(reservation)
     val again = objectMapper.readValue(serialized, Reservation::class.java)
 
-    assertThat(again).isEqualTo(reservation)
+    Assertions.assertThat(again).isEqualTo(reservation)
   }
 }

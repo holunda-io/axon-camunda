@@ -7,10 +7,17 @@ import org.camunda.bpm.engine.impl.jobexecutor.JobHandler
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.camunda.bpm.engine.impl.persistence.entity.JobEntity
 
+/**
+ * Job handler for asynchronous delivery of events (as a separate job).
+ */
 class CamundaEventCorrelatingJobHandler : JobHandler<CamundaEventCorrelatingJobHandlerConfiguration> {
 
   companion object : KLogging() {
     const val TYPE = "axon-event-correlation"
+  }
+
+  init {
+    logger.info { "AXON-CAMUNDA-002: Axon Events will be delivered to Camunda." }
   }
 
   override fun getType(): String = TYPE
@@ -35,7 +42,13 @@ class CamundaEventCorrelatingJobHandler : JobHandler<CamundaEventCorrelatingJobH
         runtimeService
           .createMessageCorrelation(configuration.eventName)
           .processInstanceVariablesEqual(mutableMapOf<String, Any>(configuration.correlationVariableName to configuration.correlationId))
-          .setVariables(configuration.variables)
+          .let {
+            if (configuration.local) {
+              it.setVariablesLocal(configuration.variables)
+            } else {
+              it.setVariables(configuration.variables)
+            }
+          }
           .correlate()
       } else {
         logger.warn { "Skipping correlation of ${configuration.eventName}: id ${configuration.correlationId}, found ${instances.size} instances for ${configuration.processDefinitionKey} instead of 1." }

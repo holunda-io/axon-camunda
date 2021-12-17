@@ -1,7 +1,8 @@
 package io.holunda.axon.camunda.example.travel.minimal.rest
 
 import io.holunda.axon.camunda.example.travel.minimal.process.MessageBasedTravelProcess
-import io.holunda.spring.io.holunda.axon.camunda.example.process.Reservation
+import io.holunda.axon.camunda.example.travel.process.CommonVariables
+import io.holunda.axon.camunda.example.travel.process.payload.Reservation
 import org.camunda.bpm.engine.RuntimeService
 import org.camunda.bpm.engine.variable.Variables
 import org.springframework.http.ResponseEntity
@@ -18,8 +19,9 @@ class ProcessStarter(private val runtime: RuntimeService) {
     val reservation = Reservation("kermit", LocalDate.now(), LocalDate.now().plusDays(2), "Astoria", "LH-124")
 
     val instanceId = runtime
-      .startProcessInstanceByKey(MessageBasedTravelProcess.KEY,
-        Variables.createVariables().putValue(MessageBasedTravelProcess.Variables.RESERVATION, reservation)
+      .startProcessInstanceByKey(
+        MessageBasedTravelProcess.KEY,
+        Variables.createVariables().putValue(CommonVariables.RESERVATION, reservation)
       )
       .processInstanceId
 

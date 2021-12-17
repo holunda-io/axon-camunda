@@ -1,0 +1,6 @@
+#
+# Run it to see the hotel booking sucessful and book flight failing because no seats are free.
+# Then, the hotel booking is compensated
+#
+POST http://localhost:9091/travel
+

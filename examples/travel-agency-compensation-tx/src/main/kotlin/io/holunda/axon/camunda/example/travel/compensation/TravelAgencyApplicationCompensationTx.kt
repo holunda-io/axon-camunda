@@ -1,4 +1,4 @@
-package io.holunda.axon.camunda.example.travel.minimal
+package io.holunda.axon.camunda.example.travel.compensation
 
 import io.holunda.axon.camunda.EnableAxonCamunda
 import org.axonframework.eventsourcing.eventstore.inmemory.InMemoryEventStorageEngine
@@ -9,17 +9,15 @@ import org.springframework.context.annotation.Bean
 import org.springframework.transaction.annotation.EnableTransactionManagement
 
 fun main(args: Array<String>) {
-  SpringApplication.run(TravelAgencyApplication::class.java, *args)
+  SpringApplication.run(TravelAgencyApplicationCompensationTx::class.java, *args)
 }
 
 @SpringBootApplication
 @EnableProcessApplication
 @EnableAxonCamunda
 @EnableTransactionManagement
-class TravelAgencyApplication {
-
+class TravelAgencyApplicationCompensationTx {
   @Bean
   fun eventStorageEngine() = InMemoryEventStorageEngine()
-
 }
 

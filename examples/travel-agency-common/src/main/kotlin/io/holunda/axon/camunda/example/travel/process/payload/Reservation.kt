@@ -1,4 +1,4 @@
-package io.holunda.spring.io.holunda.axon.camunda.example.process
+package io.holunda.axon.camunda.example.travel.process.payload
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import java.time.LocalDate

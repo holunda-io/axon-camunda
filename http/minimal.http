@@ -1,0 +1,6 @@
+#
+# Run the reservation once to see it working
+# Run it a second time to see the hotel booking failing because no rooms are free
+#
+POST http://localhost:9090/travel
+

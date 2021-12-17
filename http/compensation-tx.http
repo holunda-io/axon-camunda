@@ -1,0 +1,14 @@
+#
+# Run it to see the hotel booking sucessful and flight booking successful.
+# Then, the payment fails and bothe bookings are compensated.
+#
+POST http://localhost:9092/travel/lh123
+
+###
+# To see it working: call this once.
+# To see it failing again, call it twice. After the first time, the hotel is not available anymore.
+# Both requests will be sent, the flight booking
+POST http://localhost:9092/travel/lh124
+
+
+

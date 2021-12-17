@@ -1,5 +1,6 @@
 package io.holunda.axon.camunda.config
 
+import io.holunda.axon.camunda.processDefinitionKey
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 
@@ -12,7 +13,7 @@ interface CamundaAxonCommandFactory {
    * Maps a message from BPMN to a Command sent to Aggregate.
    */
   fun command(messageName: String, execution: DelegateExecution): Any {
-    throw UnknownCommandException(messageName)
+    throw UnknownCommandException(messageName = messageName, processDefinitionKey = execution.processDefinitionKey())
   }
 
   /**

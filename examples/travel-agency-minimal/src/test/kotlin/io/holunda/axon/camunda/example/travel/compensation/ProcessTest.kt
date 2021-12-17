@@ -12,7 +12,7 @@ class ProcessTest {
   val camunda = StandaloneInMemoryTestConfiguration().rule()
 
   @Test
-  @Deployment(resources = arrayOf(MessageBasedTravelProcess.BPMN))
+  @Deployment(resources = [MessageBasedTravelProcess.BPMN])
   fun `should deploy`() {
     // no code
   }

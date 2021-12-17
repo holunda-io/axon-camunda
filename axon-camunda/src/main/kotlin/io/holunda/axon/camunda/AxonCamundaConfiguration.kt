@@ -9,14 +9,16 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.transaction.annotation.EnableTransactionManagement
 
 @Configuration
-@ComponentScan
 @EnableTransactionManagement
 @EnableConfigurationProperties(AxonCamundaProperties::class)
+@ComponentScan
 class AxonCamundaConfiguration {
 
   @Autowired
-  fun configure(axonConfiguration: Configurer, camundaEventHandler: CamundaEventMessageHandler) {
-    axonConfiguration.registerEventHandler { camundaEventHandler }
+  fun configure(
+    axonConfiguration: Configurer, handler: CamundaEventMessageHandler
+  ) {
+    axonConfiguration.registerEventHandler { handler }
   }
 }
 

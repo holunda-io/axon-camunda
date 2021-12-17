@@ -1,7 +1,7 @@
 package io.holunda.axon.camunda.example.travel.compensation
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.holunda.spring.io.holunda.axon.camunda.example.process.Reservation
+import io.holunda.axon.camunda.example.travel.process.payload.Reservation
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith

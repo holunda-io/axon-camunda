@@ -12,6 +12,9 @@ import org.camunda.bpm.engine.impl.cfg.ProcessEngineConfigurationImpl
 import org.camunda.bpm.engine.impl.persistence.entity.MessageEntity
 import org.springframework.stereotype.Component
 
+/**
+ * Receives events from event bus and delivers them to the process via Camunda job.
+ */
 @Component
 class CamundaEventMessageHandler(
   private val registry: CamundaAxonEventCommandFactoryRegistry,
@@ -41,7 +44,7 @@ class CamundaEventMessageHandler(
             throwMessageEvent(processDefinitionKey, correlationId, camundaEvent)
           }
         } else {
-          logger.warn { "Could not map Axon Event for process definition $processDefinitionKey. Event is skipped." }
+          logger.debug { "Could not map Axon Event for process definition $processDefinitionKey. Event is skipped." }
         }
       }
   }
@@ -52,6 +55,7 @@ class CamundaEventMessageHandler(
         processDefinitionKey = processDefinitionKey,
         eventName = camundaEvent.name,
         variables = camundaEvent.variables,
+        local = camundaEvent.local,
         correlationVariableName = null,
         correlationId = null
       )
@@ -65,6 +69,7 @@ class CamundaEventMessageHandler(
           processDefinitionKey = processDefinitionKey,
           eventName = camundaEvent.name,
           variables = camundaEvent.variables,
+          local = camundaEvent.local,
           correlationVariableName = camundaEvent.correlationVariableName,
           correlationId = correlationId
         )

@@ -8,6 +8,7 @@ import org.camunda.bpm.engine.impl.jobexecutor.JobHandlerConfiguration
 data class CamundaEventCorrelatingJobHandlerConfiguration(
   val processDefinitionKey: String,
   val eventName: String,
+  val local: Boolean = false,
   val variables: Map<String, Any>,
   val correlationVariableName: String?,
   val correlationId: Any?,
