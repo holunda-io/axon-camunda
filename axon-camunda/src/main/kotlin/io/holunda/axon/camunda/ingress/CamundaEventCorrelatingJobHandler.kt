@@ -116,13 +116,8 @@ class CamundaEventCorrelatingJobHandler(
     }
   }
 
-  override fun newConfiguration(canonicalString: String): CamundaEventCorrelatingJobHandlerConfiguration? {
-    logger.info { "ObjectMapper class is ${objectMapper.javaClass}" }
-    logger.info { "canonicalString is $canonicalString" }
-    val configuration = fromCanonicalString(objectMapper = objectMapper, value = canonicalString)
-    logger.info { "Configuration is $configuration" }
-    return configuration
-  }
+  override fun newConfiguration(canonicalString: String): CamundaEventCorrelatingJobHandlerConfiguration =
+    fromCanonicalString(objectMapper = objectMapper, value = canonicalString)
 
 
   override fun onDelete(configuration: CamundaEventCorrelatingJobHandlerConfiguration, jobEntity: JobEntity) {
