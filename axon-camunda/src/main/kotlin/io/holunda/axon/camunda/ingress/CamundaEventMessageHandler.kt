@@ -1,15 +1,15 @@
 package io.holunda.axon.camunda.ingress
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.holunda.axon.camunda.AxonCamundaProperties
 import io.holunda.axon.camunda.config.CamundaAxonEventCommandFactoryRegistry
 import io.holunda.axon.camunda.config.CamundaEvent
+import io.holunda.axon.camunda.createCustomJob
 import io.holunda.axon.camunda.extractCorrelationId
-import io.holunda.axon.camunda.ingress.CamundaEventCorrelatingJobHandler.Companion.TYPE
 import mu.KLogging
 import org.axonframework.eventhandling.EventMessage
 import org.axonframework.eventhandling.EventMessageHandler
 import org.camunda.bpm.engine.impl.cfg.ProcessEngineConfigurationImpl
-import org.camunda.bpm.engine.impl.persistence.entity.MessageEntity
 import org.springframework.stereotype.Component
 
 /**
@@ -19,7 +19,8 @@ import org.springframework.stereotype.Component
 class CamundaEventMessageHandler(
   private val registry: CamundaAxonEventCommandFactoryRegistry,
   private val axonCamundaProperties: AxonCamundaProperties,
-  private val processEngineConfigurationImpl: ProcessEngineConfigurationImpl
+  private val processEngineConfigurationImpl: ProcessEngineConfigurationImpl,
+  private val objectMapper: ObjectMapper
 ) : EventMessageHandler {
 
   companion object : KLogging()
@@ -55,9 +56,7 @@ class CamundaEventMessageHandler(
         processDefinitionKey = processDefinitionKey,
         eventName = camundaEvent.name,
         variables = camundaEvent.variables,
-        local = camundaEvent.local,
-        correlationVariableName = null,
-        correlationId = null
+        local = camundaEvent.local
       )
     )
   }
@@ -70,8 +69,7 @@ class CamundaEventMessageHandler(
           eventName = camundaEvent.name,
           variables = camundaEvent.variables,
           local = camundaEvent.local,
-          correlationVariableName = camundaEvent.correlationVariableName,
-          correlationId = correlationId
+          correlationKeys = mapOf(Pair(camundaEvent.correlationVariableName, correlationId))
         )
       )
     } else {
@@ -80,16 +78,7 @@ class CamundaEventMessageHandler(
   }
 
   private fun createMessageJob(configuration: CamundaEventCorrelatingJobHandlerConfiguration) {
-    processEngineConfigurationImpl.commandExecutorTxRequired.execute { context ->
-      context.jobManager.send(
-        MessageEntity()
-          .apply {
-            this.jobHandlerConfiguration = configuration
-            this.jobHandlerType = TYPE
-          }
-      )
-    }
-
+    processEngineConfigurationImpl.createCustomJob(configuration, objectMapper)
   }
 }
 
