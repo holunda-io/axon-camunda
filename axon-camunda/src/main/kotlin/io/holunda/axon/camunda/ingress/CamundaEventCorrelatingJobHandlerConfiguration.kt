@@ -9,19 +9,18 @@ data class CamundaEventCorrelatingJobHandlerConfiguration(
   val processDefinitionKey: String,
   val eventName: String,
   val local: Boolean = false,
-  val variables: Map<String, Any>,
-  val correlationVariableName: String?,
-  val correlationId: Any?,
+  val variables: Map<String, Any> = mapOf(),
+  val businessKey: String? = null,
+  val correlationKeys: Map<String, Any> = mapOf(),
+  val startProcess: Boolean = false
 ) : JobHandlerConfiguration {
 
   companion object {
 
-    val objectMapper: ObjectMapper = jacksonObjectMapper()
-
-    fun fromCanonicalString(value: String): CamundaEventCorrelatingJobHandlerConfiguration {
+    fun fromCanonicalString(objectMapper: ObjectMapper = jacksonObjectMapper(), value: String): CamundaEventCorrelatingJobHandlerConfiguration {
       return objectMapper.readValue(value)
     }
   }
 
-  override fun toCanonicalString(): String = objectMapper.writeValueAsString(this)
+  override fun toCanonicalString(): String = throw UnsupportedOperationException()
 }
